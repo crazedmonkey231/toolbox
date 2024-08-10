@@ -1,0 +1,4 @@
+pygame-ce
+pygbag
+numpy
+pillow
