@@ -24,19 +24,24 @@ class Player(Sprite):
         # self.grow = 0
 
     def update(self, *args, **kwargs):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.current_angle += self.rotation_speed
-        if keys[pygame.K_d]:
-            self.current_angle -= self.rotation_speed
-        self.image, self.rect = toolbox.util.rotate_image(self.original_image, self.current_angle, self.rect.center)
-        if keys[pygame.K_w]:
-            rad_angle = math.radians(self.current_angle + self.image_rot_offset)
-            dx = math.sin(rad_angle) * self.move_vector[0] * args[0]
-            dy = math.cos(rad_angle) * self.move_vector[1] * args[0]
-            self.player_pos.x += dx
-            self.player_pos.y += dy
-        self.rect.center = self.player_pos
+        pass
+        # center = self.rect.center
+        # rect_y = 250 + self.float_movement_sin()
+        # self.rect.center = (center[0], rect_y)
+
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_a]:
+        #     self.current_angle += self.rotation_speed
+        # if keys[pygame.K_d]:
+        #     self.current_angle -= self.rotation_speed
+        # self.image, self.rect = toolbox.util.rotate_image(self.original_image, self.current_angle, self.rect.center)
+        # if keys[pygame.K_w]:
+        #     rad_angle = math.radians(self.current_angle + self.image_rot_offset)
+        #     dx = math.sin(rad_angle) * self.move_vector[0] * args[0]
+        #     dy = math.cos(rad_angle) * self.move_vector[1] * args[0]
+        #     self.player_pos.x += dx
+        #     self.player_pos.y += dy
+        # self.rect.center = self.player_pos
 
         # if self.grow > 100:
         #     self.mode = -1

@@ -1,3 +1,4 @@
+import math
 from collections import defaultdict
 import numpy
 from numpy import ndarray
@@ -14,6 +15,7 @@ if not mixer_initialized:
     print("Warning, sound disabled")
 if not pygame.font:
     print("Warning, fonts disabled")
+
 
 #
 # Begin utils
@@ -110,6 +112,7 @@ def load_sound(audio_path) -> object:
         class NoneSound(object):
             def play(self):
                 pass
+
         sound = NoneSound()
     else:
         sound = pygame.mixer.Sound(audio_path)
@@ -143,24 +146,59 @@ def load_gif(gif_path) -> list[Surface]:
 
 
 # Rotate image
+# Example:
+# self.current_angle -= self.rotation_speed
+# self.image, self.rect = toolbox.util.rotate_image(self.original_image, self.current_angle, self.rect.center)
 def rotate_image(original_image: Surface, angle: float, center) -> tuple[Surface, Rect]:
     rotated_image = pygame.transform.rotate(original_image, angle)
     new_rect = rotated_image.get_rect(center=center)
     return rotated_image, new_rect
 
 
-# Scale image basic
-def scale_image(original_image: Surface, new_size: tuple, center) -> tuple[Surface, Rect]:
+# Scale image basic.
+# Example:
+# orig_x, orig_y = self.original_image.get_size()
+# size_x = orig_x + round(self.grow)
+# size_y = orig_y + round(self.grow)
+# self.image, self.rect = toolbox.util.scale_image_basic(self.original_image, (size_x, size_y), self.rect.center)
+def scale_image_basic(original_image: Surface, new_size: tuple, center) -> tuple[Surface, Rect]:
     new_image = pygame.transform.scale(original_image, new_size)
     new_rect = new_image.get_rect(center=center)
     return new_image, new_rect
 
 
-# Scale image smooth
+# Scale image smooth.
+# Example:
+# orig_x, orig_y = self.original_image.get_size()
+# size_x = orig_x + round(self.grow)
+# size_y = orig_y + round(self.grow)
+# self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
 def scale_image_smooth(original_image: Surface, new_size: tuple, center) -> tuple[Surface, Rect]:
     new_image = pygame.transform.smoothscale(original_image, new_size)
     new_rect = new_image.get_rect(center=center)
     return new_image, new_rect
+
+
+# Sin curve movement, add this to the default location of the rect for hover movement in the sprite update method.
+# Example:
+# center = self.rect.center
+# rect_y = 250 + self.float_movement_sin()
+# self.rect.center = (center[0], rect_y)
+def float_movement_sin(amplitude: float = 25, speed: float = 1):
+    time = pygame.time.get_ticks() / 1000
+    delta = amplitude * math.sin(speed * time)
+    return delta
+
+
+# Cos curve movement, add this to the default location of the rect for hover movement in the sprite update method.
+# Example:
+# center = self.rect.center
+# rect_y = 250 + self.float_movement_cos()
+# self.rect.center = (center[0], rect_y)
+def float_movement_cos(amplitude: float = 25, speed: float = 1):
+    time = pygame.time.get_ticks() / 1000
+    delta = amplitude * math.cos(speed * time)
+    return delta
 
 
 # Interpolates between color1 and color2 using a factor.
@@ -184,7 +222,8 @@ def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (2
 
 #
 # Begin Particle functions
-# Needs trail attribute and draw surface set up, using screen surface will cause unwanted overwriting.
+# Needs trail attribute and custom draw surface set up that gets blit onto the screen as either an overlay or underlay.
+# Using screen surface for creating or updating will cause unwanted overwriting of sprite images.
 # If being used in sprite update method, run update first then create new or the color on creation will be overridden.
 #
 
