@@ -101,7 +101,7 @@ def get_sprite_collide_by_mask(source: Sprite, group: AbstractGroup, do_kill: bo
 
 
 # Sound loader
-def load_sound(audio_path, play_on_load=False) -> object:
+def load_sound(audio_path) -> object:
     if not mixer_initialized:
         class NoneSound(object):
             def play(self):
@@ -109,10 +109,6 @@ def load_sound(audio_path, play_on_load=False) -> object:
         sound = NoneSound()
     else:
         sound = pygame.mixer.Sound(audio_path)
-    if play_on_load:
-        if hasattr(sound, 'play'):
-            play = getattr(sound, 'play')
-            play()
     return sound
 
 
