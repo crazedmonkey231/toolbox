@@ -1,5 +1,10 @@
-# Example file showing a circle moving on screen
+# Imports
+
+# Mandatory main imports. The web build will break without these.
 import numpy
+import PIL
+
+# Normal imports.
 import pygame
 from pygame.sprite import LayeredUpdates, GroupSingle, Group
 import toolbox.util
@@ -17,6 +22,7 @@ running = True
 dt = 0
 
 asset_registry.load_image('fsh.png')
+asset_registry.load_sound('hello.wav')
 
 player: Player = Player()
 thing: Thing = Thing()
