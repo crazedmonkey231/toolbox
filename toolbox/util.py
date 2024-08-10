@@ -106,7 +106,6 @@ def load_sound(audio_path, play_on_load=False) -> object:
         class NoneSound(object):
             def play(self):
                 pass
-
         sound = NoneSound()
     else:
         sound = pygame.mixer.Sound(audio_path)
