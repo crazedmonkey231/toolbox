@@ -1,11 +1,31 @@
 from random import randint
 import pygame
 import sys
+from pygame import Surface
 
 
 class CameraGroup(pygame.sprite.Group):
     def __init__(self):
         super().__init__()
+        self.display_surface = None
+        self.offset = None
+        self.half_w = None
+        self.half_h = None
+        self.camera_borders = None
+        self.camera_rect = None
+        self.ground_surf = None
+        self.ground_rect = None
+        self.keyboard_speed = None
+        self.mouse_speed = None
+        self.zoom_scale = None
+        self.internal_surf_size = None
+        self.internal_surf = None
+        self.internal_rect = None
+        self.internal_surface_size_vector = None
+        self.internal_offset = None
+
+    # Run configure camera before adding sprites
+    def configure_camera(self):
         self.display_surface = pygame.display.get_surface()
 
         # camera offset
@@ -22,7 +42,8 @@ class CameraGroup(pygame.sprite.Group):
         self.camera_rect = pygame.Rect(l, t, w, h)
 
         # ground
-        self.ground_surf = pygame.image.load('graphics/ground.png').convert_alpha()
+        self.ground_surf = Surface((10000, 10000)).convert_alpha()
+        self.ground_surf.fill((255, 255, 0, 255))
         self.ground_rect = self.ground_surf.get_rect(topleft=(0, 0))
 
         # camera speed

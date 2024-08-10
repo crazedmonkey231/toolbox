@@ -24,6 +24,8 @@ dt = 0
 asset_registry.load_image('fsh.png')
 asset_registry.load_sound('hello.wav')
 
+# render_sprites.configure_camera()
+
 player: Player = Player()
 thing: Thing = Thing()
 
@@ -49,6 +51,7 @@ while running:
     render_sprites.update(dt)
 
     render_sprites.draw(screen)
+    # render_sprites.custom_draw(player)
 
     # flip() the display to put your work on screen
     pygame.display.flip()

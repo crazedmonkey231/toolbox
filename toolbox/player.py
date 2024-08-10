@@ -10,7 +10,7 @@ from toolbox.resistry import asset_registry
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.player_pos = pygame.Vector2(100, 100)
+        self.player_pos = pygame.Vector2(200, 200)
         self.move_vector = Vector2(200, 200)
         self.image, self.rect = asset_registry.image_registry['fsh']
         self.hello_sound = asset_registry.sound_registry['hello']
@@ -21,18 +21,22 @@ class Player(Sprite):
         self.rotation_speed = 3
         self.image_rot_offset = 180
         self.trails = []
+        self.rect.center = self.player_pos
         # self.mode = 1
         # self.grow = 0
 
     def update(self, *args, **kwargs):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.hello_sound.play()
         pass
+        # keys = pygame.key.get_pressed()
+        # if keys[pygame.K_a]:
+        #     self.hello_sound.play()
         # center = self.rect.center
         # rect_y = 250 + self.float_movement_sin()
         # self.rect.center = (center[0], rect_y)
-
+        # if keys[pygame.K_a]:
+        #     self.rect.centerx -= 1
+        # if keys[pygame.K_d]:
+        #     self.rect.centerx += 1
         # keys = pygame.key.get_pressed()
         # if keys[pygame.K_a]:
         #     self.current_angle += self.rotation_speed
