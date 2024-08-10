@@ -15,6 +15,10 @@ if not mixer_initialized:
 if not pygame.font:
     print("Warning, fonts disabled")
 
+#
+# Begin utils
+#
+
 
 # Logger
 def log(msg: str):
@@ -178,12 +182,20 @@ def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (2
     return text, text_rect
 
 
-# Particle functions
+#
+# Begin Particle functions
 # Needs trail attribute and draw surface set up, using screen surface will cause unwanted overwriting.
+# If being used in sprite update method, run update first then create new or the color on creation will be overridden.
+#
 
 # Create initial rect particle
 def create_rect_particle(draw_surface: Surface, particles: list, color, rect: Rect, size: tuple, width: float):
-    particles.append(pygame.draw.rect(draw_surface, color, (rect.left, rect.top, size[0], size[1]), width))
+    s_width, s_height = size
+    width_h = s_width // 2
+    height_h = s_height // 2
+    left = rect.centerx - width_h
+    right = rect.centery - height_h
+    particles.append(pygame.draw.rect(draw_surface, color, (left, right, s_width, s_height), width))
 
 
 # Create initial circle particle
@@ -215,3 +227,7 @@ def update_circle_particles(draw_surface: Surface, particles: list, time_alive: 
             r = trail.scale_by(.99, .99)
         trail[:] = pygame.draw.circle(draw_surface, color, trail.center, r.width / 2, r.width)
     particles[:] = n_trails
+
+#
+# End particle utils
+#
