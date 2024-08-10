@@ -18,21 +18,21 @@ class AssetRegistry(object):
     def load_image(self, name: str):
         self.image_registry[name.split('.')[0]] = toolbox.util.load_image(os.path.join(self.__image_dir, name))
 
-    def get_image(self, name: str):
+    def get_image(self, name: str) -> tuple[Surface, Rect]:
         surface, rect = self.image_registry[name]
         return surface.copy(), rect.copy()
 
     def load_sound(self, name: str):
         self.sound_registry[name.split('.')[0]] = toolbox.util.load_sound(os.path.join(self.__sound_dir, name))
 
-    def get_sound(self, name: str):
+    def get_sound(self, name: str) -> Sound:
         sound = self.sound_registry[name]
         return sound
 
     def load_gif(self, name: str):
         self.gif_registry[name.split('.')[0]] = toolbox.util.load_gif(os.path.join(self.__gif_dir, name))
 
-    def get_gif(self, name: str):
+    def get_gif(self, name: str) -> list[Surface]:
         gif = [surface.copy() for surface in self.gif_registry[name]]
         return gif
 
