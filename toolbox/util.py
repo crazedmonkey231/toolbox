@@ -221,7 +221,7 @@ def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (2
 
 #
 # Begin Particle functions
-# Needs trail attribute and custom draw surface set up that gets blit onto the screen as either an overlay or underlay.
+# Needs particle list and custom draw surface set up that gets blit onto the screen as either an overlay or underlay.
 # Using screen surface for creating or updating will cause unwanted overwriting of sprite images.
 # If being used in sprite update method, run update first then create new or the color on creation will be overridden.
 #
