@@ -221,11 +221,11 @@ def update_circle_particles(draw_surface: Surface, particles: list, time_alive: 
                             color=(255, 255, 255, 255)):
     n_trails = [t for t in particles if t.size[0] != 0 and t.size[1] != 0]
     for trail in n_trails:
-        pygame.draw.circle(draw_surface, (0, 0, 0, 0), trail.center, trail.width, trail.width)
+        pygame.draw.rect(draw_surface, (0, 0, 0, 0), trail, trail.width)
         r = trail
         if time_alive % decay_factor == 0:
             r = trail.scale_by(.99, .99)
-        trail[:] = pygame.draw.circle(draw_surface, color, trail.center, r.width / 2, r.width)
+        trail[:] = pygame.draw.circle(draw_surface, color, trail.center, r.width // 2)
     particles[:] = n_trails
 
 #
