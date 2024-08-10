@@ -1,6 +1,6 @@
 # Imports
 
-# Mandatory imports. The web build will break without these because there is no dynamic module loading in web games.
+# Mandatory imports. The web build will break without preloading these modules.
 import numpy
 import PIL
 
