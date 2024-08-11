@@ -1,7 +1,9 @@
 from random import randint
 import pygame
 import sys
-from pygame import Surface
+from pygame import Surface, Vector2
+
+import toolbox.util
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -43,7 +45,7 @@ class CameraGroup(pygame.sprite.Group):
 
         # ground
         self.ground_surf = Surface((10000, 10000)).convert_alpha()
-        self.ground_surf.fill((255, 255, 0, 255))
+        self.ground_surf.fill((0, 255, 100, 255))
         self.ground_rect = self.ground_surf.get_rect(topleft=(0, 0))
 
         # camera speed
@@ -135,19 +137,21 @@ class CameraGroup(pygame.sprite.Group):
 
     def zoom_keyboard_control(self):
         keys = pygame.key.get_pressed()
+        scale = self.zoom_scale
         if keys[pygame.K_q]:
-            self.zoom_scale += 0.1
+            scale += 0.01
         if keys[pygame.K_e]:
-            self.zoom_scale -= 0.1
+            scale -= 0.01
+        self.zoom_scale = toolbox.util.clamp_value(scale, .02, 3)
 
     def custom_draw(self, player):
-        self.center_target_camera(player)
+        # self.center_target_camera(player)
         # self.box_target_camera(player)
         # self.keyboard_control()
-        # self.mouse_control()
-        # self.zoom_keyboard_control()
+        self.mouse_control()
+        self.zoom_keyboard_control()
 
-        self.internal_surf.fill('#71ddee')
+        self.internal_surf.fill('black')
 
         # ground
         ground_offset = self.ground_rect.topleft - self.offset + self.internal_offset
@@ -155,7 +159,7 @@ class CameraGroup(pygame.sprite.Group):
 
         # active elements
         for sprite in sorted(self.sprites(), key=lambda s: s.rect.centery):
-            offset_pos = sprite.rect.topleft - self.offset + self.internal_offset
+            offset_pos = Vector2(sprite.rect.topleft) - self.offset + self.internal_offset
             self.internal_surf.blit(sprite.image, offset_pos)
 
         scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surface_size_vector * self.zoom_scale)

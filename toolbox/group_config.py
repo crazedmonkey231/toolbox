@@ -6,10 +6,10 @@ from toolbox.camera import CameraGroup
 #
 
 # No camera renderer
-render_sprites: LayeredUpdates = LayeredUpdates()
+# render_sprites: LayeredUpdates = LayeredUpdates()
 
 # Use camera renderer
-# render_sprites: CameraGroup = CameraGroup()
+render_sprites: CameraGroup = CameraGroup()
 
 #
 # Organizational Groups

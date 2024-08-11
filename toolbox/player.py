@@ -28,15 +28,18 @@ class Player(Sprite):
     def update(self, *args, **kwargs):
         pass
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_a]:
-            self.hello_sound.play()
+        # if keys[pygame.K_a]:
+        #     self.hello_sound.play()
+
         # center = self.rect.center
         # rect_y = 250 + self.float_movement_sin()
         # self.rect.center = (center[0], rect_y)
-        # if keys[pygame.K_a]:
-        #     self.rect.centerx -= 1
-        # if keys[pygame.K_d]:
-        #     self.rect.centerx += 1
+        dx = 0
+        if keys[pygame.K_a]:
+            dx = -300 * args[0]
+        if keys[pygame.K_d]:
+            dx = 300 * args[0]
+        self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1])
         # keys = pygame.key.get_pressed()
         # if keys[pygame.K_a]:
         #     self.current_angle += self.rotation_speed
