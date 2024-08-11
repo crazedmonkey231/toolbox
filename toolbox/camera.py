@@ -167,6 +167,7 @@ class CameraGroup(pygame.sprite.Group):
 
         self.display_surface.blit(scaled_surf, scaled_rect)
 
+
 # pygame.init()
 # screen = pygame.display.set_mode((1280, 720))
 # clock = pygame.time.Clock()
