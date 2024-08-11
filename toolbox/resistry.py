@@ -1,4 +1,3 @@
-import copy
 import os
 from collections import defaultdict
 import dir_config
@@ -27,7 +26,8 @@ class AssetRegistry(object):
         self.sound_registry[name.split('.')[0]] = toolbox.util.load_sound(os.path.join(self.__sound_dir, name))
 
     def get_sound(self, name: str) -> Sound:
-        return copy.deepcopy(self.sound_registry[name])
+        sound = self.sound_registry[name]
+        return sound
 
     def load_gif(self, name: str):
         self.gif_registry[name.split('.')[0]] = toolbox.util.load_gif(os.path.join(self.__gif_dir, name))

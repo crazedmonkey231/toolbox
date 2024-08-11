@@ -12,8 +12,8 @@ class Player(Sprite):
         Sprite.__init__(self)
         self.player_pos = pygame.Vector2(200, 200)
         self.move_vector = Vector2(200, 200)
-        self.image, self.rect = asset_registry.image_registry['fsh']
-        self.hello_sound = asset_registry.sound_registry['hello']
+        self.image, self.rect = asset_registry.get_image('fsh')
+        self.hello_sound = asset_registry.get_sound('hello')
         self.mask: Mask = pygame.mask.from_surface(self.image)
         self.original_image = self.image
         self.image_x_flipped = pygame.transform.flip(self.original_image, True, False)
@@ -27,9 +27,9 @@ class Player(Sprite):
 
     def update(self, *args, **kwargs):
         pass
-        # keys = pygame.key.get_pressed()
-        # if keys[pygame.K_a]:
-        #     self.hello_sound.play()
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            self.hello_sound.play()
         # center = self.rect.center
         # rect_y = 250 + self.float_movement_sin()
         # self.rect.center = (center[0], rect_y)
