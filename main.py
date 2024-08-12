@@ -12,10 +12,10 @@ from toolbox.player import Player
 from toolbox.group_config import render_sprites, player_group
 from toolbox.resistry import asset_registry
 
+#
 # pygame setup
-
+#
 pygame.init()
-
 screen = pygame.display.set_mode(SCREEN_SIZE)
 canvas = Surface(CANVAS_SIZE).convert_alpha()
 clock = pygame.time.Clock()
@@ -45,7 +45,6 @@ load_registry()
 #
 # Test Sprites area
 #
-
 player: Player = Player((200, 200), player_group)
 render_sprites.add(player)
 
