@@ -4,7 +4,6 @@ from toolbox.camera import CameraRenderer
 #
 # Main renderer
 #
-
 render_sprites: CameraRenderer = CameraRenderer()
 
 #
