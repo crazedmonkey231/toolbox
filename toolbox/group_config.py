@@ -5,10 +5,6 @@ from toolbox.camera import CameraRenderer
 # Main renderer
 #
 
-# No camera renderer, uses _layer attribute to draw sprites in a given order.
-# render_sprites: LayeredUpdates = LayeredUpdates()
-
-# Use camera renderer, auto sorts sprites for simulated world depth.
 render_sprites: CameraRenderer = CameraRenderer()
 
 #
