@@ -218,6 +218,35 @@ def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (2
     text_rect = text.get_rect()
     return text, text_rect
 
+#
+# Begin Sprite callables
+#
+
+
+def call_clicked_method(sprite: Sprite, pos):
+    was_clicked = False
+    if sprite.rect.collidepoint(pos):
+        method_name = '_clicked'
+        if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+            method = getattr(sprite, method_name)
+            method()
+            was_clicked = True
+    return was_clicked
+
+
+def call_cutscene_start_method(sprite: Sprite):
+    method_name = '_start'
+    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+        method = getattr(sprite, method_name)
+        method()
+
+
+def call_cutscene_skip_method(sprite: Sprite):
+    method_name = '_skip'
+    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+        method = getattr(sprite, method_name)
+        method()
+
 
 #
 # Begin Particle functions

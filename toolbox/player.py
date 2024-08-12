@@ -8,9 +8,9 @@ from toolbox.resistry import asset_registry
 
 
 class Player(Sprite):
-    def __init__(self):
-        Sprite.__init__(self)
-        self.player_pos = pygame.Vector2(200, 200)
+    def __init__(self, pos, group):
+        Sprite.__init__(self, group)
+        self.player_pos = pygame.Vector2(pos)
         self.move_vector = Vector2(200, 200)
         self.image, self.rect = asset_registry.get_image('fsh')
         self.hello_sound = asset_registry.get_sound('hello')
@@ -22,12 +22,22 @@ class Player(Sprite):
         self.image_rot_offset = 180
         self.trails = []
         self.rect.center = self.player_pos
-        # self.mode = 1
-        # self.grow = 0
+        self.mode = 1
+        self.grow = 0
+        self.hovered = False
+        self.collision_rect = self.rect
 
     def update(self, *args, **kwargs):
         pass
         keys = pygame.key.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+
+        pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
+        if self.rect.collidepoint(mouse_pos) and not self.hovered:
+            self.hovered = True
+        elif not self.rect.collidepoint(mouse_pos) and self.hovered:
+            self.hovered = False
+
         # if keys[pygame.K_a]:
         #     self.hello_sound.play()
 
@@ -35,11 +45,16 @@ class Player(Sprite):
         # rect_y = 250 + self.float_movement_sin()
         # self.rect.center = (center[0], rect_y)
         dx = 0
+        dy = 0
         if keys[pygame.K_a]:
             dx = -300 * args[0]
         if keys[pygame.K_d]:
             dx = 300 * args[0]
-        self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1])
+        if keys[pygame.K_w]:
+            dy = -300 * args[0]
+        if keys[pygame.K_s]:
+            dy = 300 * args[0]
+        self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1] + dy)
         # keys = pygame.key.get_pressed()
         # if keys[pygame.K_a]:
         #     self.current_angle += self.rotation_speed
@@ -54,16 +69,16 @@ class Player(Sprite):
         #     self.player_pos.y += dy
         # self.rect.center = self.player_pos
 
-        # if self.grow > 100:
-        #     self.mode = -1
-        # if self.grow < 1:
-        #     self.mode = 1
-        # self.grow += 1 * self.mode
-        #
-        # orig_x, orig_y = self.original_image.get_size()
-        # size_x = orig_x + round(self.grow)
-        # size_y = orig_y + round(self.grow)
-        # self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
+        if self.grow > 100:
+            self.mode = -1
+        if self.grow < 1:
+            self.mode = 1
+        self.grow += 1 * self.mode
+
+        orig_x, orig_y = self.original_image.get_size()
+        size_x = orig_x + round(self.grow)
+        size_y = orig_y + round(self.grow)
+        self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
 
         #
         # collision test

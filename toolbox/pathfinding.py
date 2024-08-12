@@ -2,19 +2,12 @@ import heapq
 import random
 import pygame
 from pygame import Surface
+from config import GRID_SIZE, CELL_SIZE, DIRECTIONS, RGB_WHITE, RGB_BLACK, RGB_GREEN
 from toolbox.util import log
 
-WIDTH, HEIGHT = 960, 960
-GRID_SIZE = WIDTH // 24
-CELL_SIZE = WIDTH // GRID_SIZE
 
-DIRECTIONS = [(0, 1), (0, -1), (1, 0), (-1, 0)]
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
+# Define grid and node properties
+grid = [[0] * GRID_SIZE for _ in range(GRID_SIZE)]  # 0 = walkable, 1 = blocked
 
 
 # Define the Cell class
@@ -25,10 +18,6 @@ class Cell:
         self.f = float('inf')  # Total cost of the cell (g + h)
         self.g = float('inf')  # Cost from start to this cell
         self.h = 0  # Heuristic cost from this cell to destination
-
-
-# Define grid and node properties
-grid = [[0] * GRID_SIZE for _ in range(GRID_SIZE)]  # 0 = walkable, 1 = blocked
 
 
 def randomize_walls(amount: int):
@@ -171,20 +160,22 @@ def get_grid_pos(pos):
 def draw_grid(screen: Surface):
     for x in range(GRID_SIZE):
         for y in range(GRID_SIZE):
-            color = WHITE
+            color = RGB_WHITE
             if not is_unblocked(x, y):
-                color = BLACK
+                color = RGB_BLACK
             pygame.draw.rect(screen, color, (x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 
 def draw_path(screen: Surface, path):
     for node in path:
-        pygame.draw.rect(screen, GREEN, (node[0] * CELL_SIZE, node[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(screen, RGB_GREEN, (node[0] * CELL_SIZE, node[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
-
+#
+# Pathfinding draw test
+#
 # pygame.init()
 # fps = 120
-# display_screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# display_screen = pygame.display.set_mode((game_config.SCREEN_WIDTH, game_config.SCREEN_HEIGHT))
 # clock = pygame.time.Clock()
 # running = True
 # dt = 0

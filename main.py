@@ -6,37 +6,28 @@ import PIL
 
 # Normal imports.
 import pygame
-from pygame.sprite import LayeredUpdates, GroupSingle, Group
-import toolbox.util
+from pygame import Surface
+from config import SCREEN_SIZE, CANVAS_SIZE, FPS
 from toolbox.player import Player
-from toolbox.thing import Thing
-from toolbox.group_config import render_sprites, player_group, enemy_group
+from toolbox.group_config import render_sprites, player_group
 from toolbox.resistry import asset_registry
 
 # pygame setup
+
 pygame.init()
-fps = 120
-screen = pygame.display.set_mode((1280, 720))
+
+screen = pygame.display.set_mode(SCREEN_SIZE)
+canvas = Surface(CANVAS_SIZE).convert_alpha()
 clock = pygame.time.Clock()
 running = True
-dt = 0
+delta_time = 0
 
 asset_registry.load_image('fsh.png')
 asset_registry.load_sound('hello.wav')
 
-render_sprites.configure_camera()
-
-player: Player = Player()
-thing: Thing = Thing()
-
+player: Player = Player((200, 200), player_group)
 render_sprites.add(player)
-render_sprites.add(thing)
 
-player_group.add(player)
-
-enemy_group.add(thing)
-
-thing.rect.center = (1280 // 2, 720 // 2)
 
 while running:
     # poll for events
@@ -45,20 +36,19 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("purple")
+    # Draw sprites to canvas
+    canvas.fill("purple")
+    render_sprites.update(delta_time, canvas)
+    render_sprites.draw(canvas)
 
-    render_sprites.update(dt)
-
-    # render_sprites.draw(screen)
-    render_sprites.custom_draw(player)
+    # Draw subsection of canvas to screen
+    screen.fill('white')
+    screen.blit(canvas, (0, 0), (player.rect.centerx - 640, player.rect.centery - 360, 1280, 720))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(fps) / 1000
+    # Delta time
+    delta_time = clock.tick(FPS) / 1000
 
 pygame.quit()
