@@ -16,7 +16,7 @@ from toolbox.resistry import asset_registry
 # pygame setup
 #
 pygame.init()
-screen = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_mode(SCREEN_SIZE)
 canvas = Surface(CANVAS_SIZE).convert_alpha()
 clock = pygame.time.Clock()
 running = True
