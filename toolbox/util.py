@@ -7,15 +7,14 @@ from pygame import Surface, Rect
 from pygame.sprite import Sprite, AbstractGroup
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
+from config import DEBUG
 
-DEBUG = False
-
+# Check mixer
 mixer_initialized = pygame.mixer or pygame.mixer.get_init()
 if not mixer_initialized:
     print("Warning, sound disabled")
 if not pygame.font:
     print("Warning, fonts disabled")
-
 
 #
 # Begin utils

@@ -3,6 +3,7 @@ import os
 #
 # Game Config
 #
+DEBUG = False
 
 # Asset directories
 MAIN_DIR = os.path.split(os.path.abspath(__file__))[0]
