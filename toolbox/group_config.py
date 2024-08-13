@@ -4,7 +4,7 @@ from toolbox.camera import CameraRenderer
 #
 # Main renderer
 #
-render_sprites: CameraRenderer = CameraRenderer()
+renderer_group: CameraRenderer = CameraRenderer()
 
 #
 # Player ref group

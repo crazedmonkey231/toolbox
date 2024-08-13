@@ -3,7 +3,7 @@ import pygame
 from pygame import Surface, Vector2, Mask
 from pygame.sprite import Sprite
 import toolbox.util
-from toolbox.group_config import enemy_group, render_sprites
+from toolbox.group_config import enemy_group, renderer_group
 from toolbox.resistry import asset_registry
 
 
@@ -43,7 +43,7 @@ class Player(Sprite):
 
     def update(self, *args, **kwargs):
         self._input(args[0])
-        render_sprites.camera_lookat_pos = self.rect.center
+        renderer_group.camera_lookat_pos = self.rect.center
         pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
         # mouse_pos = pygame.mouse.get_pos()
         #

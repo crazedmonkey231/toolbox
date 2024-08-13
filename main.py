@@ -9,7 +9,7 @@ import pygame
 from pygame import Surface
 from config import SCREEN_SIZE, CANVAS_SIZE, FPS, RGB_WHITE
 from toolbox.player import Player
-from toolbox.group_config import render_sprites, player_ref_group
+from toolbox.group_config import renderer_group, player_ref_group
 from toolbox.resistry import asset_registry
 
 #
@@ -48,7 +48,7 @@ load_registry()
 #
 def load_starting_sprites():
     player: Player = Player((200, 200), player_ref_group)
-    render_sprites.add(player)
+    renderer_group.add(player)
     pass
 
 
@@ -66,8 +66,8 @@ while running:
 
     # Draw sprites to canvas
     canvas.fill(RGB_WHITE)
-    render_sprites.update(delta_time, canvas)
-    render_sprites.draw(canvas)
+    renderer_group.update(delta_time, canvas)
+    renderer_group.draw(canvas)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
