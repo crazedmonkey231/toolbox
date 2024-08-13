@@ -1,4 +1,4 @@
-from pygame.sprite import LayeredUpdates, Group, GroupSingle
+from pygame.sprite import Group, GroupSingle
 from toolbox.camera import CameraRenderer
 
 #
@@ -7,9 +7,13 @@ from toolbox.camera import CameraRenderer
 render_sprites: CameraRenderer = CameraRenderer()
 
 #
+# Player ref group
+#
+player_ref_group: GroupSingle = GroupSingle()
+
+#
 # Organizational Groups
 #
-player_group: GroupSingle = GroupSingle()
 enemy_group: Group = Group()
 pickup_group: Group = Group()
 effect_group: Group = Group()

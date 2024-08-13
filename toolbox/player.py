@@ -3,7 +3,7 @@ import pygame
 from pygame import Surface, Vector2, Mask
 from pygame.sprite import Sprite
 import toolbox.util
-from toolbox.group_config import enemy_group
+from toolbox.group_config import enemy_group, render_sprites
 from toolbox.resistry import asset_registry
 
 
@@ -27,34 +27,35 @@ class Player(Sprite):
         self.hovered = False
         self.collision_rect = self.rect
 
-    def update(self, *args, **kwargs):
-        pass
+    def _input(self, delta_time):
         keys = pygame.key.get_pressed()
-        mouse_pos = pygame.mouse.get_pos()
-
-        pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
-        if self.rect.collidepoint(mouse_pos) and not self.hovered:
-            self.hovered = True
-        elif not self.rect.collidepoint(mouse_pos) and self.hovered:
-            self.hovered = False
-
-        # if keys[pygame.K_a]:
-        #     self.hello_sound.play()
-
-        # center = self.rect.center
-        # rect_y = 250 + self.float_movement_sin()
-        # self.rect.center = (center[0], rect_y)
         dx = 0
         dy = 0
         if keys[pygame.K_a]:
-            dx = -300 * args[0]
+            dx = -300 * delta_time
         if keys[pygame.K_d]:
-            dx = 300 * args[0]
+            dx = 300 * delta_time
         if keys[pygame.K_w]:
-            dy = -300 * args[0]
+            dy = -300 * delta_time
         if keys[pygame.K_s]:
-            dy = 300 * args[0]
+            dy = 300 * delta_time
         self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1] + dy)
+
+    def update(self, *args, **kwargs):
+        self._input(args[0])
+        render_sprites.camera_lookat_pos = self.rect.center
+        pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
+        # mouse_pos = pygame.mouse.get_pos()
+        #
+        # if self.rect.collidepoint(mouse_pos) and not self.hovered:
+        #     self.hovered = True
+        # elif not self.rect.collidepoint(mouse_pos) and self.hovered:
+        #     self.hovered = False
+        # if keys[pygame.K_a]:
+        #     self.hello_sound.play()
+        # center = self.rect.center
+        # rect_y = 250 + self.float_movement_sin()
+        # self.rect.center = (center[0], rect_y)
         # keys = pygame.key.get_pressed()
         # if keys[pygame.K_a]:
         #     self.current_angle += self.rotation_speed
@@ -69,16 +70,16 @@ class Player(Sprite):
         #     self.player_pos.y += dy
         # self.rect.center = self.player_pos
 
-        if self.grow > 100:
-            self.mode = -1
-        if self.grow < 1:
-            self.mode = 1
-        self.grow += 1 * self.mode
-
-        orig_x, orig_y = self.original_image.get_size()
-        size_x = orig_x + round(self.grow)
-        size_y = orig_y + round(self.grow)
-        self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
+        # if self.grow > 100:
+        #     self.mode = -1
+        # if self.grow < 1:
+        #     self.mode = 1
+        # self.grow += 1 * self.mode
+        #
+        # orig_x, orig_y = self.original_image.get_size()
+        # size_x = orig_x + round(self.grow)
+        # size_y = orig_y + round(self.grow)
+        # self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
 
         #
         # collision test

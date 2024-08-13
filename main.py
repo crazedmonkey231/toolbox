@@ -9,7 +9,7 @@ import pygame
 from pygame import Surface
 from config import SCREEN_SIZE, CANVAS_SIZE, FPS, RGB_WHITE
 from toolbox.player import Player
-from toolbox.group_config import render_sprites, player_group
+from toolbox.group_config import render_sprites, player_ref_group
 from toolbox.resistry import asset_registry
 
 #
@@ -42,11 +42,18 @@ def load_registry():
 
 load_registry()
 
+
 #
-# Test Sprites area
+# Load starting sprites
 #
-player: Player = Player((200, 200), player_group)
-render_sprites.add(player)
+def load_starting_sprites():
+    player: Player = Player((200, 200), player_ref_group)
+    render_sprites.add(player)
+    pass
+
+
+load_starting_sprites()
+
 
 #
 # Main loop
