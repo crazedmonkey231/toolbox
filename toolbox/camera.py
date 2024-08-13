@@ -12,6 +12,11 @@ class CameraRenderer(RenderUpdates):
         self.screen: Surface = None
         self.screen_rect: Rect = None
         self.camera_lookat_pos = (SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF)
+        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF, self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF)
+
+    def mouse_pos_to_global_pos(self):
+        mouse_pos = pygame.mouse.get_pos()
+        return mouse_pos[0] + self.top_left[0], mouse_pos[1] + self.top_left[1]
 
     def draw(self, surface):
         if not self.screen:
@@ -33,8 +38,7 @@ class CameraRenderer(RenderUpdates):
                 dirty_append(new_rect)
             self.spritedict[sprite] = new_rect
         self.screen.fill(RGB_BLACK)
-        self.screen_rect = Rect(self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF,
-                                self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF,
-                                SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF, self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF)
+        self.screen_rect = Rect(self.top_left[0], self.top_left[1], SCREEN_WIDTH, SCREEN_HEIGHT)
         self.screen.blit(surface, (0, 0), self.screen_rect)
         return dirty

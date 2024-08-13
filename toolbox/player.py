@@ -45,12 +45,14 @@ class Player(Sprite):
         self._input(args[0])
         renderer_group.camera_lookat_pos = self.rect.center
         pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
-        # mouse_pos = pygame.mouse.get_pos()
-        #
-        # if self.rect.collidepoint(mouse_pos) and not self.hovered:
+
+        # pos = renderer_group.mouse_pos_to_global_pos()
+        # if self.rect.collidepoint(pos) and not self.hovered:
         #     self.hovered = True
-        # elif not self.rect.collidepoint(mouse_pos) and self.hovered:
+        # elif not self.rect.collidepoint(pos) and self.hovered:
         #     self.hovered = False
+        # print(self.hovered)
+
         # if keys[pygame.K_a]:
         #     self.hello_sound.play()
         # center = self.rect.center
