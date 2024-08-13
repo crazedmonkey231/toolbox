@@ -27,22 +27,32 @@ class Player(Sprite):
         self.hovered = False
         self.collision_rect = self.rect
 
-    def _input(self, delta_time):
+    def _input(self, *args):
+        delta_time = args[0]
+        canvas_size = args[1].get_size()
         keys = pygame.key.get_pressed()
         dx = 0
         dy = 0
-        if keys[pygame.K_a]:
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
             dx = -300 * delta_time
-        if keys[pygame.K_d]:
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             dx = 300 * delta_time
-        if keys[pygame.K_w]:
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             dy = -300 * delta_time
-        if keys[pygame.K_s]:
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
             dy = 300 * delta_time
+        if self.rect.left < 0:
+            dx = 300 * delta_time
+        if self.rect.right > canvas_size[0]:
+            dx = -300 * delta_time
+        if self.rect.top < 0:
+            dy = 300 * delta_time
+        if self.rect.bottom > canvas_size[1]:
+            dy = -300 * delta_time
         self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1] + dy)
 
     def update(self, *args, **kwargs):
-        self._input(args[0])
+        self._input(*args)
         renderer_group.camera_lookat_pos = self.rect.center
         pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
 
