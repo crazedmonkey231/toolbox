@@ -7,6 +7,8 @@ import PIL
 # Normal imports.
 import pygame
 from pygame import Surface
+
+import toolbox.util
 from config import SCREEN_SIZE, CANVAS_SIZE, FPS, RGB_WHITE
 from toolbox.player import Player
 from toolbox.group_config import renderer_group, player_ref_group
@@ -63,6 +65,13 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEWHEEL:
+            new_zoom_scale = renderer_group.zoom_scale
+            if event.y == 1:
+                new_zoom_scale += 0.1
+            if event.y == -1:
+                new_zoom_scale -= 0.1
+            renderer_group.zoom_scale = toolbox.util.clamp_value(new_zoom_scale, 0.1, 5)
 
     # Draw sprites to canvas
     canvas.fill(RGB_WHITE)

@@ -16,7 +16,7 @@ GIF_DIR: LiteralString = os.path.join(MAIN_DIR, 'gif')
 FPS: int = 120
 
 # Screen
-SCREEN_SIZE: tuple[int, int] = (1280, 720)
+SCREEN_SIZE: tuple[int, int] = (800, 600)
 SCREEN_WIDTH: int = SCREEN_SIZE[0]
 SCREEN_WIDTH_HALF: int = SCREEN_SIZE[0] // 2
 SCREEN_HEIGHT: int = SCREEN_SIZE[1]
