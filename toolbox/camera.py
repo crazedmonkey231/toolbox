@@ -2,7 +2,8 @@ import pygame
 from pygame import Surface, Rect
 from pygame.sprite import RenderUpdates
 import toolbox.util
-from config import RGB_BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, RGB_WHITE, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF
+from config import (RGB_BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, RGB_WHITE, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF, MIN_ZOOM,
+                    MAX_ZOOM, ZOOM_STEP)
 
 
 # Camera Renderer, auto sorts based on rect.bottom for sprites and draws to screen.
@@ -13,11 +14,16 @@ class CameraRenderer(RenderUpdates):
         self.screen_rect: Rect = None
         self.camera_lookat_pos = (SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF)
         self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF, self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF)
-        self.zoom_scale = .5
+        self.zoom_scale = 1
 
     def mouse_pos_to_global_pos(self):
         mouse_pos = pygame.mouse.get_pos()
         return mouse_pos[0] + self.top_left[0], mouse_pos[1] + self.top_left[1]
+
+    def update_zoom_scale(self, zoom_direction):
+        if zoom_direction == 1 or zoom_direction == -1:
+            new_zoom_scale = self.zoom_scale + (ZOOM_STEP * zoom_direction)
+            self.zoom_scale = toolbox.util.clamp_value(new_zoom_scale, MIN_ZOOM, MAX_ZOOM)
 
     def draw(self, canvas):
         if not self.screen:

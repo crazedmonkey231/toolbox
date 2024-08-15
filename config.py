@@ -29,6 +29,11 @@ CANVAS_WIDTH_HALF: int = CANVAS_SIZE[0] // 2
 CANVAS_HEIGHT: int = CANVAS_SIZE[1]
 CANVAS_HEIGHT_HALF: int = CANVAS_SIZE[1] // 2
 
+# Camera
+MIN_ZOOM: float = 0.1
+MAX_ZOOM: float = 5
+ZOOM_STEP: float = 0.1
+
 # Pathfinding
 GRID_WIDTH: int = 32
 GRID_SIZE: int = CANVAS_WIDTH // GRID_WIDTH

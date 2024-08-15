@@ -13,6 +13,7 @@ from config import SCREEN_SIZE, CANVAS_SIZE, FPS, RGB_WHITE
 from toolbox.player import Player
 from toolbox.group_config import renderer_group, player_ref_group
 from toolbox.resistry import asset_registry
+from toolbox.thing import Thing
 
 #
 # pygame setup
@@ -51,6 +52,10 @@ load_registry()
 def load_starting_sprites():
     player: Player = Player((200, 200), player_ref_group)
     renderer_group.add(player)
+
+    t = Thing()
+    t.rect.center = (500, 500)
+    renderer_group.add(t)
     pass
 
 
@@ -66,12 +71,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEWHEEL:
-            new_zoom_scale = renderer_group.zoom_scale
-            if event.y == 1:
-                new_zoom_scale += 0.1
-            if event.y == -1:
-                new_zoom_scale -= 0.1
-            renderer_group.zoom_scale = toolbox.util.clamp_value(new_zoom_scale, 0.1, 5)
+            renderer_group.update_zoom_scale(event.y)
 
     # Draw sprites to canvas
     canvas.fill(RGB_WHITE)
