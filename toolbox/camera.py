@@ -10,16 +10,22 @@ from config import (RGB_BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, RGB_WHITE, SCREEN_WI
 class CameraRenderer(RenderUpdates):
     def __init__(self):
         super().__init__()
+        self.zoom_scale = 1
         self.screen: Surface = None
         self.screen_rect: Rect = None
         self.camera_lookat_pos = (SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF)
-        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF, self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF)
-        self.zoom_scale = 1
-        self.screen_overlay = None
+        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF * self.zoom_scale,
+                         self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF * self.zoom_scale)
+        self.screen_overlay: Surface = None
+        self._snapshot_rect: Rect = None
+        self._snapshot_surface: Surface = None
 
     def mouse_pos_to_global_pos(self):
-        mouse_pos = pygame.mouse.get_pos()
-        return mouse_pos[0] + self.top_left[0], mouse_pos[1] + self.top_left[1]
+        # Todo
+        pass
+        # mouse_pos = pygame.mouse.get_pos()
+        # print(mouse_pos[0] - SCREEN_WIDTH * self.zoom_scale)
+        # return mouse_pos[0] - SCREEN_WIDTH * self.zoom_scale, mouse_pos[1] - SCREEN_HEIGHT * self.zoom_scale
 
     def update_zoom_scale(self, zoom_direction):
         if zoom_direction == 1 or zoom_direction == -1:
@@ -58,13 +64,14 @@ class CameraRenderer(RenderUpdates):
         dy_corner_left = self.top_left[1] + SCREEN_HEIGHT_HALF * self.zoom_scale
 
         # Snapshot the canvas onto a scaled surface
-        snapshot_rect = Rect(dx_corner_top, dy_corner_left, dx, dy)
-        snapshot = Surface((dx, dy)).convert_alpha()
-        snapshot.fill((0, 0, 0, 255))
-        snapshot.blit(canvas, (0, 0), snapshot_rect)
+        self._snapshot_rect = Rect(dx_corner_top, dy_corner_left, dx, dy)
+        self._snapshot_surface = Surface((dx, dy)).convert_alpha()
+        self._snapshot_surface.fill((0, 0, 0, 255))
+        self._snapshot_surface.blit(canvas, (0, 0), self._snapshot_rect)
 
         # Scale snapshot to screen size and center then blit on to screen
-        scaled_surface, scaled_rect = toolbox.util.scale_image_smooth(snapshot, (SCREEN_WIDTH, SCREEN_HEIGHT),
+        scaled_surface, scaled_rect = toolbox.util.scale_image_smooth(self._snapshot_surface,
+                                                                      (SCREEN_WIDTH, SCREEN_HEIGHT),
                                                                       (SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF))
         self.screen.blit(scaled_surface, (0, 0), scaled_rect)
         self.screen.blit(self.screen_overlay, (0, 0))

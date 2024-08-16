@@ -58,6 +58,7 @@ class Player(Sprite):
         pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
 
         # pos = renderer_group.mouse_pos_to_global_pos()
+        # print(pos)
         # if self.rect.collidepoint(pos) and not self.hovered:
         #     self.hovered = True
         # elif not self.rect.collidepoint(pos) and self.hovered:
