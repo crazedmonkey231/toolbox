@@ -212,13 +212,22 @@ def interpolate_color_rgba(color1, color2, factor) -> tuple[int, int, int, int]:
     return r, g, b, a
 
 
-# Simple text maker
-def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (255, 255, 255)) -> tuple[Surface, Rect]:
+# Simple text maker rgb
+def make_simple_text_rgb(text: str, size: int = 64, color: tuple[int, int, int] = (255, 255, 255)) \
+        -> tuple[Surface, Rect]:
     font = pygame.font.Font(None, size)
     text = font.render(text, True, color)
     text_rect = text.get_rect()
     return text, text_rect
 
+
+# Simple text maker rgba
+def make_simple_text_rgba(text: str, size: int = 64, color: tuple[int, int, int, int] = (255, 255, 255, 255)) \
+        -> tuple[Surface, Rect]:
+    font = pygame.font.Font(None, size)
+    text = font.render(text, True, color)
+    text_rect = text.get_rect()
+    return text, text_rect
 
 #
 # Begin Sprite callables
@@ -244,7 +253,7 @@ def call_on_click_start_method(sprite: Sprite):
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
-        
+
 
 def call_on_click_end_method(sprite: Sprite):
     method_name = '_on_click_end'
