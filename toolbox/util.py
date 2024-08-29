@@ -16,6 +16,7 @@ if not mixer_initialized:
 if not pygame.font:
     print("Warning, fonts disabled")
 
+
 #
 # Begin utils
 #
@@ -111,6 +112,7 @@ def load_sound(audio_path) -> object:
         class NoneSound(object):
             def play(self):
                 pass
+
         sound = NoneSound()
     else:
         sound = pygame.mixer.Sound(audio_path)
@@ -217,9 +219,26 @@ def make_simple_text(text: str, size: int = 64, color: tuple[int, int, int] = (2
     text_rect = text.get_rect()
     return text, text_rect
 
+
 #
 # Begin Sprite callables
 #
+
+
+def call_on_hover_start_method(sprite: Sprite, pos):
+    if sprite.rect.collidepoint(pos):
+        method_name = '_on_hover_start'
+        if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+            method = getattr(sprite, method_name)
+            method()
+
+
+def call_on_hover_end_method(sprite: Sprite, pos):
+    if sprite.rect.collidepoint(pos):
+        method_name = '_on_hovered_end'
+        if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+            method = getattr(sprite, method_name)
+            method()
 
 
 def call_clicked_method(sprite: Sprite, pos):
@@ -245,6 +264,24 @@ def call_cutscene_skip_method(sprite: Sprite):
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
+
+
+def call_on_damage_method(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: float,
+                          affected_stat: str = "health", is_crit: bool = False, crit_multi: float = 1.0,
+                          *args, **kwargs) -> float:
+    method_name = '_on_damage'
+    damage_dealt: float = 0.0
+    if hasattr(target_sprite, method_name) and callable(getattr(target_sprite, method_name)):
+        method = getattr(target_sprite, method_name)
+        calc_kwargs = {"causer": causer_sprite,
+                       "is_crit": is_crit,
+                       "crit_multi": crit_multi,
+                       "affected_stat": affected_stat,
+                       "damage_amount": damage_amount * crit_multi if is_crit else damage_amount
+                       }
+        new_args = {**calc_kwargs, **kwargs}
+        damage_dealt = method(*args, **new_args)
+    return damage_dealt
 
 
 #
