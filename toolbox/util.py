@@ -239,8 +239,15 @@ def call_on_hover_end_method(sprite: Sprite):
         method()
 
 
-def call_on_click_method(sprite: Sprite):
-    method_name = '_on_click'
+def call_on_click_start_method(sprite: Sprite):
+    method_name = '_on_click_start'
+    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
+        method = getattr(sprite, method_name)
+        method()
+        
+
+def call_on_click_end_method(sprite: Sprite):
+    method_name = '_on_click_end'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
