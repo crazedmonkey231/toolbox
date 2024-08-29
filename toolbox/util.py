@@ -241,15 +241,12 @@ def call_on_hover_end_method(sprite: Sprite, pos):
             method()
 
 
-def call_clicked_method(sprite: Sprite, pos):
-    was_clicked = False
+def call_on_click_method(sprite: Sprite, pos):
     if sprite.rect.collidepoint(pos):
-        method_name = '_clicked'
+        method_name = '_on_click'
         if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
             method = getattr(sprite, method_name)
             method()
-            was_clicked = True
-    return was_clicked
 
 
 def call_cutscene_start_method(sprite: Sprite):
