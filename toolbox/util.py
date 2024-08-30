@@ -229,6 +229,7 @@ def make_simple_text_rgba(text: str, size: int = 64, color: tuple[int, int, int,
     text_rect = text.get_rect()
     return text, text_rect
 
+
 #
 # Begin Sprite callables
 #
