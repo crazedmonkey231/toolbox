@@ -20,8 +20,10 @@ class CameraRenderer(RenderUpdates):
         self._snapshot_rect: Rect = None
         self._snapshot_surface: Surface = None
 
-    def mouse_pos_to_global_pos(self, pos):
-        return pos[0] + self.top_left[0] + SCREEN_WIDTH_HALF, pos[1] + self.top_left[1] + SCREEN_HEIGHT_HALF
+    def pos_to_global_pos(self, pos):
+        new_x = pos[0] + self.top_left[0]
+        new_y = pos[1] + self.top_left[1]
+        return new_x, new_y
 
     def update_zoom_scale(self, zoom_direction):
         if zoom_direction == 1 or zoom_direction == -1:
@@ -51,13 +53,14 @@ class CameraRenderer(RenderUpdates):
             self.spritedict[sprite] = new_rect
         # Clear screen and cache top left
         self.screen.fill(RGB_BLACK)
-        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH * self.zoom_scale,
-                         self.camera_lookat_pos[1] - SCREEN_HEIGHT * self.zoom_scale)
+        self.top_left = (self.camera_lookat_pos[0] - SCREEN_WIDTH_HALF * self.zoom_scale,
+                         self.camera_lookat_pos[1] - SCREEN_HEIGHT_HALF * self.zoom_scale)
         # Calculate deltas
-        dx = SCREEN_WIDTH * self.zoom_scale
-        dy = SCREEN_HEIGHT * self.zoom_scale
-        dx_corner_top = self.top_left[0] + SCREEN_WIDTH_HALF * self.zoom_scale
-        dy_corner_left = self.top_left[1] + SCREEN_HEIGHT_HALF * self.zoom_scale
+        dx = self.top_left[0] + SCREEN_WIDTH
+        dy = self.top_left[1] + SCREEN_HEIGHT
+
+        dx_corner_top = self.top_left[0] + SCREEN_WIDTH_HALF
+        dy_corner_left = self.top_left[1] + SCREEN_HEIGHT_HALF
 
         # Snapshot the canvas onto a scaled surface
         self._snapshot_rect = Rect(dx_corner_top, dy_corner_left, dx, dy)
