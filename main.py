@@ -73,6 +73,12 @@ while running:
         if event.type == pygame.MOUSEWHEEL:
             renderer_group.update_zoom_scale(event.y)
 
+    loc = renderer_group.mouse_pos_to_global_pos(pygame.mouse.get_pos())
+    print(loc)
+    for i in renderer_group.sprites():
+        if i.rect.collidepoint(loc):
+            print('overlap')
+
     # Draw sprites to canvas
     canvas.fill(RGB_WHITE)
     renderer_group.update(delta_time, canvas)

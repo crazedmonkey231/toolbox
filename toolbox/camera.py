@@ -20,12 +20,8 @@ class CameraRenderer(RenderUpdates):
         self._snapshot_rect: Rect = None
         self._snapshot_surface: Surface = None
 
-    def mouse_pos_to_global_pos(self):
-        # Todo
-        pass
-        # mouse_pos = pygame.mouse.get_pos()
-        # print(mouse_pos[0] - SCREEN_WIDTH * self.zoom_scale)
-        # return mouse_pos[0] - SCREEN_WIDTH * self.zoom_scale, mouse_pos[1] - SCREEN_HEIGHT * self.zoom_scale
+    def mouse_pos_to_global_pos(self, pos):
+        return pos[0] + self.top_left[0] + SCREEN_WIDTH_HALF, pos[1] + self.top_left[1] + SCREEN_HEIGHT_HALF
 
     def update_zoom_scale(self, zoom_direction):
         if zoom_direction == 1 or zoom_direction == -1:
