@@ -1,5 +1,7 @@
 import math
 from collections import defaultdict
+from typing import Sequence
+
 import numpy
 from numpy import ndarray
 import pygame
@@ -106,45 +108,6 @@ def get_sprite_collide_by_mask(source: Sprite, group: AbstractGroup, do_kill: bo
     return pygame.sprite.spritecollide(source, group, do_kill, pygame.sprite.collide_mask)
 
 
-# Sound loader
-def load_sound(audio_path) -> object:
-    if not mixer_initialized:
-        class NoneSound(object):
-            def play(self):
-                pass
-
-        sound = NoneSound()
-    else:
-        sound = pygame.mixer.Sound(audio_path)
-    return sound
-
-
-# Image loader
-def load_image(image_path, color_key=None, scale=1) -> tuple[Surface, Rect]:
-    image = pygame.image.load(image_path).convert_alpha()
-    size = image.get_size()
-    image = pygame.transform.scale(image, (size[0] * scale, size[1] * scale))
-    if color_key is not None:
-        if color_key == -1:
-            color_key = image.get_at((0, 0))
-        image.set_colorkey(color_key, pygame.RLEACCEL)
-    return image, image.get_rect()
-
-
-# Gif loader
-def load_gif(gif_path) -> list[Surface]:
-    ret = []
-    gif: GifImageFile = Image.open(gif_path)
-    for frame_index in range(gif.n_frames):
-        gif.seek(frame_index)
-        frame_rgba = gif.convert("RGBA")
-        pygame_image = pygame.image.fromstring(
-            frame_rgba.tobytes(), frame_rgba.size, frame_rgba.mode
-        )
-        ret.append(pygame_image)
-    return ret
-
-
 # Rotate image
 # Example:
 # self.current_angle -= self.rotation_speed
@@ -173,7 +136,7 @@ def scale_image_basic(original_image: Surface, new_size: tuple, center) -> tuple
 # size_x = orig_x + round(self.grow)
 # size_y = orig_y + round(self.grow)
 # self.image, self.rect = toolbox.util.scale_image_smooth(self.original_image, (size_x, size_y), self.rect.center)
-def scale_image_smooth(original_image: Surface, new_size: tuple, center) -> tuple[Surface, Rect]:
+def scale_image_smooth(original_image: Surface, new_size: Sequence[float], center) -> tuple[Surface, Rect]:
     new_image = pygame.transform.smoothscale(original_image, new_size)
     new_rect = new_image.get_rect(center=center)
     return new_image, new_rect
@@ -236,51 +199,51 @@ def make_simple_text_rgba(text: str, size: int = 64, color: tuple[int, int, int,
 
 
 def call_on_hover_start_method(sprite: Sprite):
-    method_name = '_on_hover_start'
+    method_name = 'on_hover_start'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
 def call_on_hover_end_method(sprite: Sprite):
-    method_name = '_on_hovered_end'
+    method_name = 'on_hovered_end'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
 def call_on_click_start_method(sprite: Sprite):
-    method_name = '_on_click_start'
+    method_name = 'on_click_start'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
 def call_on_click_end_method(sprite: Sprite):
-    method_name = '_on_click_end'
+    method_name = 'on_click_end'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
 def call_cutscene_start_method(sprite: Sprite):
-    method_name = '_start'
+    method_name = 'cutscene_start'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
 def call_cutscene_skip_method(sprite: Sprite):
-    method_name = '_skip'
+    method_name = 'cutscene_skip'
     if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
         method = getattr(sprite, method_name)
         method()
 
 
-def call_on_damage_method(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: float,
-                          affected_stat: str = "health", is_crit: bool = False, crit_multi: float = 1.0,
-                          *args, **kwargs) -> float:
-    method_name = '_on_damage'
+def apply_damage(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: float,
+                 affected_stat: str = "health", is_crit: bool = False, crit_multi: float = 1.0,
+                 *args, **kwargs) -> float:
+    method_name = 'on_damage'
     damage_dealt: float = 0.0
     if hasattr(target_sprite, method_name) and callable(getattr(target_sprite, method_name)):
         method = getattr(target_sprite, method_name)

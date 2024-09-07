@@ -1,10 +1,10 @@
-from pygame.sprite import Group, GroupSingle
+from pygame.sprite import Group, GroupSingle, LayeredUpdates
 from toolbox.camera import CameraRenderer
 
 #
 # Main renderer
 #
-renderer_group: CameraRenderer = CameraRenderer()
+renderer_group: LayeredUpdates = LayeredUpdates()
 
 #
 # Player ref group
@@ -19,4 +19,3 @@ pickup_group: Group = Group()
 effect_group: Group = Group()
 projectile_group: Group = Group()
 widget_group: Group = Group()
-button_group: Group = Group()

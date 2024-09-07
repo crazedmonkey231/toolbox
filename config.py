@@ -1,6 +1,8 @@
 import os
 from typing import AnyStr, LiteralString
 
+from pygame import Vector2
+
 #
 # Game Config
 #
@@ -21,6 +23,7 @@ SCREEN_WIDTH: int = SCREEN_SIZE[0]
 SCREEN_WIDTH_HALF: int = SCREEN_SIZE[0] // 2
 SCREEN_HEIGHT: int = SCREEN_SIZE[1]
 SCREEN_HEIGHT_HALF: int = SCREEN_SIZE[1] // 2
+SCREEN_SIZE_V2: Vector2 = Vector2(SCREEN_SIZE)
 
 # Canvas
 CANVAS_SIZE: tuple[int, int] = (10000, 10000)

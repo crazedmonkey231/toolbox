@@ -1,15 +1,17 @@
-import math
 import pygame
-from pygame import Surface, Vector2, Mask
-from pygame.sprite import Sprite
-import toolbox.util
-from toolbox.group_config import enemy_group, renderer_group
+from pygame import Vector2, Mask
+
+from toolbox.components.comp_grow import CompGrow
+from toolbox.components.comp_input import CompInput
+from toolbox.components.comp_launcher import CompTimedLauncher
+from toolbox.components.comp_mouse_follower import CompMouseFollowerDirection
+from toolbox.game_objects import Player, Projectile
 from toolbox.resistry import asset_registry
 
 
-class Player(Sprite):
-    def __init__(self, pos, group):
-        Sprite.__init__(self, group)
+class FpsPlayer(Player):
+    def __init__(self, pos):
+        super().__init__(pos)
         self.player_pos = pygame.Vector2(pos)
         self.move_vector = Vector2(200, 200)
         self.image, self.rect = asset_registry.get_image('fsh')
@@ -27,35 +29,14 @@ class Player(Sprite):
         self.hovered = False
         self.collision_rect = self.rect
         self.move_speed = 100
-
-    def _input(self, *args):
-        delta_time = args[0]
-        canvas_size = args[1].get_size()
-        keys = pygame.key.get_pressed()
-        dx = 0
-        dy = 0
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            dx = -self.move_speed * delta_time
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            dx = self.move_speed * delta_time
-        if keys[pygame.K_w] or keys[pygame.K_UP]:
-            dy = -self.move_speed * delta_time
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            dy = self.move_speed * delta_time
-        if self.rect.left < 0:
-            dx = self.move_speed * delta_time
-        if self.rect.right > canvas_size[0]:
-            dx = -self.move_speed * delta_time
-        if self.rect.top < 0:
-            dy = self.move_speed * delta_time
-        if self.rect.bottom > canvas_size[1]:
-            dy = -self.move_speed * delta_time
-        self.rect.center = round(self.rect.center[0] + dx), round(self.rect.center[1] + dy)
+        self.components.append(CompInput(self))
+        self.comp_launcher = CompTimedLauncher(self, Projectile)
+        self.components.append(self.comp_launcher)
 
     def update(self, *args, **kwargs):
-        self._input(*args)
-        renderer_group.camera_lookat_pos = self.rect.center
-        pygame.draw.rect(args[1], (255, 0, 0), self.rect, 3)
+        super().update(*args, **kwargs)
+        pygame.draw.rect(args[0], (255, 0, 0), self.rect, 3)
+        self.comp_launcher.is_firing = pygame.mouse.get_pressed()[0]
 
         # pos = renderer_group.mouse_pos_to_global_pos()
         # print(pos)
