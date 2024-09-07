@@ -5,10 +5,10 @@ from toolbox.game_objects import GameObject, GameObjectComponent
 
 
 class CompTargeter(GameObjectComponent):
-    def __init__(self, parent: GameObject):
+    def __init__(self, parent: GameObject, target: Vector2):
         super().__init__(parent)
         self.original_image = parent.image
-        self.target: Vector2 = None
+        self.target: Vector2 = target
 
     def comp_update(self, *args, **kwargs):
         if self.target:
