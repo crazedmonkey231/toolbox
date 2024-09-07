@@ -18,6 +18,7 @@ class CompMouseFollowerDirection(GameObjectComponent):
         super().__init__(parent)
         self.original_image = parent.image
         self.rotation = 0
+        self.rotation_offset = 2 * math.pi
 
     def comp_update(self, *args, **kwargs):
         parent = self.parent
@@ -25,7 +26,7 @@ class CompMouseFollowerDirection(GameObjectComponent):
         mouse_pos = Vector2(pygame.mouse.get_pos())
         delta_pos = mouse_pos - center
         self.rotation = math.atan2(delta_pos.y, delta_pos.x)
-        image = pygame.transform.rotate(self.original_image, math.degrees(2 * math.pi - self.rotation))
+        image = pygame.transform.rotate(self.original_image, math.degrees(self.rotation_offset - self.rotation))
         rect = image.get_rect(center=center)
         parent.image = image
         parent.rect = rect

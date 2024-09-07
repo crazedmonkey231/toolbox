@@ -1,5 +1,5 @@
 import pygame
-from pygame import Surface, Mask
+from pygame import Surface, Mask, Vector2
 from pygame.sprite import Sprite
 from toolbox.group_config import *
 

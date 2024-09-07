@@ -7,9 +7,13 @@ import PIL
 # Normal imports.
 import pygame
 from config import SCREEN_SIZE, FPS, RGB_WHITE
-from toolbox.fpsplayer import FpsPlayer
+from toolbox.sprites.gameplayer import GamePlayer
 from toolbox.group_config import renderer_group
 from toolbox.resistry import asset_registry
+
+# Quick print so imports aren't lost on refactor
+print(numpy)
+print(PIL)
 
 #
 # pygame setup
@@ -33,7 +37,7 @@ gifs = []
 asset_registry.load_registry(images, sounds, gifs)
 
 # Starting Sprite
-FpsPlayer((200, 200))
+GamePlayer((200, 200))
 
 # Main loop
 while running:
