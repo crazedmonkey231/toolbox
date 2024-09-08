@@ -25,12 +25,12 @@ class GamePlayer(Player):
         self.mask: Mask = pygame.mask.from_surface(self.image)
         self.components.append(CompInput(self))
         # self.components.append(CompMouseFollowerPosition(self))
-        # self.comp_launcher = CompTimedLauncher(self, Bullet, 0.1)
-        # self.components.append(self.comp_launcher)
+        self.comp_launcher = CompTimedLauncher(self, Bullet, 0.1)
+        self.components.append(self.comp_launcher)
         # self.components.append(CompDraw(self))
-        self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), 0.5, False))
+        self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), True, 0.5, False))
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
         pygame.draw.rect(shared.screen, (255, 0, 0), self.rect, 3)
-        # self.comp_launcher.is_firing = pygame.mouse.get_pressed()[0]
+        self.comp_launcher.is_firing = pygame.mouse.get_pressed()[0]

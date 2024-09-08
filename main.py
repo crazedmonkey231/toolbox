@@ -30,7 +30,7 @@ shared.clock = pygame.time.Clock()
 #
 # Load Registry
 #
-images = ['fsh.png']
+images = ['fsh.png', 'bullet.png']
 sounds = ['hello.wav']
 gifs = ['fire.gif']
 

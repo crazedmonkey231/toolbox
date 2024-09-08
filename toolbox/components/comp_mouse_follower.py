@@ -1,7 +1,6 @@
 import math
 import pygame
 from pygame import Vector2
-
 from toolbox.game_objects import GameObject, GameObjectComponent
 
 

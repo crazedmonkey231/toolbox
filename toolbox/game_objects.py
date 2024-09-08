@@ -11,6 +11,7 @@ class GameObject(Sprite):
         self.a_props: list = list(*args)
         self.k_props: dict = dict(**kwargs)
         self.mask: Mask = None
+        self.rotation = 0
         self.components: list[GameObjectComponent] = list()
         super().__init__(groups)
         self.image = Surface((48, 48)).convert_alpha()
