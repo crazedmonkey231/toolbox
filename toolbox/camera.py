@@ -6,6 +6,7 @@ from config import (RGB_BLACK, SCREEN_WIDTH, SCREEN_HEIGHT, RGB_WHITE, SCREEN_WI
                     MAX_ZOOM, ZOOM_STEP)
 
 
+# Todo
 # Camera Renderer, auto sorts based on rect.bottom for sprites and draws to screen.
 class CameraRenderer(RenderUpdates):
     def __init__(self):
