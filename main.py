@@ -32,7 +32,7 @@ shared.clock = pygame.time.Clock()
 #
 images = ['fsh.png']
 sounds = ['hello.wav']
-gifs = []
+gifs = ['fire.gif']
 
 
 # Load assets

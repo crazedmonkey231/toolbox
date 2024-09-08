@@ -3,6 +3,7 @@ from pygame import Vector2, Mask, Surface
 
 import shared
 from toolbox.components.comp_draw import CompDraw
+from toolbox.components.comp_gif_player import CompGifPlayer
 from toolbox.components.comp_grow import CompGrow
 from toolbox.components.comp_input import CompInput
 from toolbox.components.comp_launcher import CompTimedLauncher
@@ -26,7 +27,8 @@ class GamePlayer(Player):
         # self.components.append(CompMouseFollowerPosition(self))
         # self.comp_launcher = CompTimedLauncher(self, Bullet, 0.1)
         # self.components.append(self.comp_launcher)
-        self.components.append(CompDraw(self))
+        # self.components.append(CompDraw(self))
+        self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), 0.5, False))
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
