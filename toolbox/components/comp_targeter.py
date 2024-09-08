@@ -1,6 +1,8 @@
 import math
 import pygame
 from pygame import Vector2
+
+import shared
 from toolbox.game_objects import GameObject, GameObjectComponent
 
 
@@ -25,8 +27,9 @@ class CompTargeter(GameObjectComponent):
                 rot = math.atan2(delta_pos_n.y, delta_pos_n.x)
                 image = pygame.transform.rotate(self.original_image, math.degrees(self.rotation_offset - rot))
                 rect = image.get_rect(center=center)
-                dx = (delta_pos_n.x * self.move_speed) * args[1]
-                dy = (delta_pos_n.y * self.move_speed) * args[1]
+                delta_time = shared.delta_time
+                dx = (delta_pos_n.x * self.move_speed) * delta_time
+                dy = (delta_pos_n.y * self.move_speed) * delta_time
                 rect.center = center + Vector2(dx, dy)
                 parent.image = image
                 parent.rect = rect

@@ -1,4 +1,5 @@
 import pygame
+import shared
 from toolbox.game_objects import GameObject, GameObjectComponent
 
 
@@ -12,8 +13,8 @@ class CompInput(GameObjectComponent):
         self.down = False
 
     def comp_update(self, *args, **kwargs):
-        delta_time = args[1]
-        canvas_size = args[0].get_size()
+        delta_time = shared.delta_time
+        canvas_size = shared.screen.get_size()
         keys = pygame.key.get_pressed()
         dx = 0
         dy = 0

@@ -1,6 +1,6 @@
 from pygame import Vector2
 from pygame.mixer import Sound
-
+import shared
 import toolbox.util
 from toolbox.game_objects import GameObject, GameObjectComponent, Projectile
 
@@ -40,7 +40,7 @@ class CompTimedLauncher(GameObjectComponent):
 
     def comp_update(self, *args, **kwargs):
         if self.current_cooldown > 0:
-            self.current_cooldown = toolbox.util.clamp_value(self.current_cooldown - args[1], 0, self.cooldown)
+            self.current_cooldown = toolbox.util.clamp_value(self.current_cooldown - shared.delta_time, 0, self.cooldown)
         if self.is_firing and self.current_cooldown == 0:
             self.launch_projectile()
             self.current_cooldown = self.cooldown

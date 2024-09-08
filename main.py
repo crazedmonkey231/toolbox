@@ -8,8 +8,9 @@ import PIL
 import pygame
 from config import SCREEN_SIZE, FPS, RGB_WHITE
 from toolbox.sprites.gameplayer import GamePlayer
-from toolbox.group_config import renderer_group
+from shared import renderer_group
 from toolbox.resistry import asset_registry
+import shared
 
 # Quick print so imports aren't lost on refactor
 print(numpy)
@@ -19,10 +20,10 @@ print(PIL)
 # pygame setup
 #
 pygame.init()
-screen = pygame.display.set_mode(SCREEN_SIZE)
-clock = pygame.time.Clock()
-running = True
-delta_time = 0
+shared.screen = pygame.display.set_mode(SCREEN_SIZE)
+shared.overlay = shared.screen.copy().convert_alpha()
+shared.overlay.fill((0, 0, 0, 0))
+shared.clock = pygame.time.Clock()
 
 
 #
@@ -40,21 +41,22 @@ asset_registry.load_registry(images, sounds, gifs)
 GamePlayer((200, 200))
 
 # Main loop
-while running:
+while shared.running:
     # poll for events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
+            shared.running = False
 
     # Draw sprites to canvas
-    screen.fill(RGB_WHITE)
-    renderer_group.update(screen, delta_time)
-    renderer_group.draw(screen)
+    shared.screen.fill(RGB_WHITE)
+    renderer_group.update()
+    shared.screen.blit(shared.overlay, (0, 0))
+    renderer_group.draw(shared.screen)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
     # Delta time
-    delta_time = clock.tick(FPS) / 1000
+    shared.delta_time = shared.clock.tick(FPS) / 1000
 
 pygame.quit()

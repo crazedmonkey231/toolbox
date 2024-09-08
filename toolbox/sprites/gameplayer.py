@@ -1,6 +1,7 @@
 import pygame
 from pygame import Vector2, Mask
 
+import shared
 from toolbox.components.comp_grow import CompGrow
 from toolbox.components.comp_input import CompInput
 from toolbox.components.comp_launcher import CompTimedLauncher
@@ -23,5 +24,5 @@ class GamePlayer(Player):
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
-        pygame.draw.rect(args[0], (255, 0, 0), self.rect, 3)
+        pygame.draw.rect(shared.screen, (255, 0, 0), self.rect, 3)
         self.comp_launcher.is_firing = pygame.mouse.get_pressed()[0]

@@ -3,6 +3,7 @@ import math
 import pygame
 from pygame import Vector2
 
+import shared
 from config import SCREEN_SIZE_V2
 from toolbox.game_objects import GameObjectComponent, GameObject
 
@@ -29,7 +30,8 @@ class CompMovement(GameObjectComponent):
             parent = self.parent
             center = Vector2(parent.rect.center)
             if 0 <= center.x <= SCREEN_SIZE_V2.x and 0 <= center.y <= SCREEN_SIZE_V2.y:
-                center = center + Vector2(self.dx * args[1], self.dy * args[1])
+                delta_time = shared.delta_time
+                center = center + Vector2(self.dx * delta_time, self.dy * delta_time)
                 image = pygame.transform.rotate(self.original_image, math.degrees(self.img_rot))
                 rect = image.get_rect(center=center)
                 parent.image = image

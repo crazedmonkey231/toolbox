@@ -1,4 +1,5 @@
 from pygame import Vector2
+import shared
 import toolbox.util
 from toolbox.game_objects import GameObject, GameObjectComponent
 
@@ -24,10 +25,10 @@ class CompGrow(GameObjectComponent):
                 self.grow = True
         cached_growth = self.growth
         if self.growth < self.growth_max and self.grow:
-            self.growth = toolbox.util.clamp_value(self.growth + self.grow_speed * args[1], 0, self.growth_max)
+            self.growth = toolbox.util.clamp_value(self.growth + self.grow_speed * shared.delta_time, 0, self.growth_max)
             self.current_growth = toolbox.util.map_range_clamped(self.growth, 0, self.growth_max, 1, self.growth_size)
         elif self.growth > 0 and not self.grow:
-            self.growth = toolbox.util.clamp_value(self.growth - self.grow_speed * args[1], 0, self.growth_max)
+            self.growth = toolbox.util.clamp_value(self.growth - self.grow_speed * shared.delta_time, 0, self.growth_max)
             self.current_growth = toolbox.util.map_range_clamped(self.growth, 0, self.growth_max, 1, self.growth_size)
         if cached_growth != self.growth and 0 < self.growth < self.growth_max:
             parent = self.parent

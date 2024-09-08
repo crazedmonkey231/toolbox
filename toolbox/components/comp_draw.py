@@ -1,4 +1,5 @@
 import pygame
+import shared
 from pygame import Surface
 from toolbox.game_objects import GameObject, GameObjectComponent
 
@@ -11,4 +12,4 @@ class CompDraw(GameObjectComponent):
 
     def comp_update(self, *args, **kwargs):
         if pygame.mouse.get_pressed()[0]:
-            args[0].blit(self.brush, self.parent.rect.topleft)
+            shared.overlay.blit(self.brush, self.parent.rect.topleft)
