@@ -7,10 +7,11 @@ import PIL
 # Normal imports.
 import pygame
 from config import SCREEN_SIZE, FPS, RGB_WHITE
+from toolbox.splash_screen import SplashScreen
 from toolbox.sprites.gameplayer import GamePlayer
+import shared
 from shared import renderer_group
 from toolbox.resistry import asset_registry
-import shared
 
 # Quick print so imports aren't lost on refactor
 print(numpy)
@@ -38,7 +39,7 @@ gifs = []
 asset_registry.load_registry(images, sounds, gifs)
 
 # Starting Sprite
-GamePlayer((200, 200))
+SplashScreen()
 
 # Main loop
 while shared.running:
@@ -50,13 +51,13 @@ while shared.running:
     # Draw sprites to canvas
     shared.screen.fill(RGB_WHITE)
     renderer_group.update()
-    shared.screen.blit(shared.overlay, (0, 0))
     renderer_group.draw(shared.screen)
+    shared.screen.blit(shared.overlay, (0, 0))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
     # Delta time
-    shared.delta_time = shared.clock.tick(FPS) / 1000
+    shared.delta_time = shared.clock.tick(FPS) / shared.delta_slowdown
 
 pygame.quit()

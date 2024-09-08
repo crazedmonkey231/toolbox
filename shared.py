@@ -5,6 +5,7 @@ overlay = None
 clock = None
 running = True
 delta_time = 0
+delta_slowdown = 1000
 
 # Main renderer
 renderer_group: LayeredUpdates = LayeredUpdates()
