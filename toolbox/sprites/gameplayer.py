@@ -18,7 +18,7 @@ class GamePlayer(Player):
         self.image, self.rect = asset_registry.get_image('fsh')
         self.mask: Mask = pygame.mask.from_surface(self.image)
         self.components.append(CompInput(self))
-        self.comp_launcher = CompTimedLauncher(self, Bullet, 1, asset_registry.get_sound("hello"))
+        self.comp_launcher = CompTimedLauncher(self, Bullet, 0.1)
         self.components.append(self.comp_launcher)
 
     def update(self, *args, **kwargs):

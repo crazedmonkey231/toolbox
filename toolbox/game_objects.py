@@ -60,6 +60,10 @@ class GameObjectComponent(object):
         pass
 
 
+def get_component_by_type(game_object: GameObject, comp_type: type[GameObjectComponent]):
+    return [comp for comp in game_object.components if isinstance(comp, comp_type)]
+
+
 # Todo Experience
 class Experience(GameObject):
     def __init__(self):

@@ -1,10 +1,7 @@
 import pygame
 from pygame import Vector2, Mask
-
-from toolbox.components.comp_grow import CompGrow
-from toolbox.components.comp_targeter import CompTargeter
+from toolbox.components.comp_movement import CompMovement
 from toolbox.game_objects import Projectile
-from toolbox.group_config import *
 
 
 class Bullet(Projectile):
@@ -12,7 +9,7 @@ class Bullet(Projectile):
         super().__init__(pos)
         self.rect.center = pos
         self.target = Vector2(pygame.mouse.get_pos())
-        self.comp_targeter = CompTargeter(self, Vector2(self.target), 500)
+        self.comp_targeter = CompMovement(self, self.target, 500)
         self.components.append(self.comp_targeter)
         self.mask: Mask = pygame.mask.from_surface(self.image)
 

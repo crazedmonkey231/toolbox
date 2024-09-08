@@ -1,10 +1,13 @@
 import math
+
 import pygame
 from pygame import Vector2
-from toolbox.game_objects import GameObject, GameObjectComponent
+
+from config import SCREEN_SIZE_V2
+from toolbox.game_objects import GameObjectComponent, GameObject
 
 
-class CompTargeter(GameObjectComponent):
+class CompMovement(GameObjectComponent):
     def __init__(self, parent: GameObject, target: Vector2, move_speed: float = 0, destroy_on_dest: bool = True):
         super().__init__(parent)
         self.original_image = parent.image
@@ -14,25 +17,24 @@ class CompTargeter(GameObjectComponent):
         self._is_targeting = True
         self.destroy_on_dest = destroy_on_dest
         self.distance_buffer = 5
+        center = Vector2(parent.rect.center)
+        delta_pos = self.target - center
+        rot = math.atan2(delta_pos.y, delta_pos.x)
+        self.img_rot = self.rotation_offset - rot
+        self.dx = math.cos(rot) * self.move_speed
+        self.dy = math.sin(rot) * self.move_speed
 
     def comp_update(self, *args, **kwargs):
         if self._is_targeting:
             parent = self.parent
             center = Vector2(parent.rect.center)
-            delta_pos = self.target - center
-            if delta_pos.length() > self.distance_buffer:
-                delta_pos_n = delta_pos.normalize()
-                rot = math.atan2(delta_pos_n.y, delta_pos_n.x)
-                image = pygame.transform.rotate(self.original_image, math.degrees(self.rotation_offset - rot))
+            if 0 <= center.x <= SCREEN_SIZE_V2.x and 0 <= center.y <= SCREEN_SIZE_V2.y:
+                center = center + Vector2(self.dx * args[1], self.dy * args[1])
+                image = pygame.transform.rotate(self.original_image, math.degrees(self.img_rot))
                 rect = image.get_rect(center=center)
-                dx = (delta_pos_n.x * self.move_speed) * args[1]
-                dy = (delta_pos_n.y * self.move_speed) * args[1]
-                rect.center = center + Vector2(dx, dy)
                 parent.image = image
                 parent.rect = rect
             else:
                 self._is_targeting = False
         elif not self._is_targeting and self.destroy_on_dest:
             self.parent.kill()
-
-
