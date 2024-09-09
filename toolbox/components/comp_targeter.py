@@ -25,7 +25,8 @@ class CompTargeter(GameObjectComponent):
             if delta_pos.length() > self.distance_buffer:
                 delta_pos_n = delta_pos.normalize()
                 rot = math.atan2(delta_pos_n.y, delta_pos_n.x)
-                image = pygame.transform.rotate(self.original_image, math.degrees(self.rotation_offset - rot))
+                self.parent.rotation = math.degrees(self.rotation_offset - rot)
+                image = pygame.transform.rotate(self.original_image, self.parent.rotation)
                 rect = image.get_rect(center=center)
                 delta_time = shared.delta_time
                 dx = (delta_pos_n.x * self.move_speed) * delta_time

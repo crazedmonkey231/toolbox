@@ -9,11 +9,12 @@ from toolbox.game_objects import GameObjectComponent, GameObject
 
 class CompMovementArch(GameObjectComponent):
     def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, max_arch_height: float = 100,
-                 max_arch_delta: float = 10, destroy_on_dest: bool = True):
+                 max_arch_delta: float = 10, inverse: bool = False, destroy_on_dest: bool = True):
         super().__init__(parent)
         self.original_image = parent.image
         self.is_targeting = True
         self.destroy_on_dest = destroy_on_dest
+        self.inverse = -1 if inverse else 1
 
         self.start_pos = Vector2(self.parent.rect.center)
         self.target_pos: Vector2 = target_pos
@@ -41,7 +42,7 @@ class CompMovementArch(GameObjectComponent):
                 self.rect_x += self.move_speed * self.dist_target_norm.x * shared.delta_time
                 norm_position = abs((self.rect_x - self.start_pos.x) / (self.dist_target_abs.x + shared.epsilon))
                 self.rect_y = ((1 - norm_position) * self.start_pos.y + norm_position * self.target_pos.y -
-                               self.arch_height * self.delta_arch * norm_position * (1 - norm_position))
+                               self.arch_height * self.inverse * self.delta_arch * norm_position * (1 - norm_position))
             else:
                 self.rect_x = self.target_pos.x
                 self.rect_y = self.target_pos.y
