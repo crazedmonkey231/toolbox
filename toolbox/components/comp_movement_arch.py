@@ -34,7 +34,7 @@ class CompMovementArch(GameObjectComponent):
         self.direction = 1 if target_pos.x > self.start_pos.x else -1
 
         self.arch_height_max = max_arch_height
-        self.distance_buffer = 5
+        self.distance_buffer = 10
 
         self.arch_height = toolbox.util.clamp_value(self.distance_x, 1, self.arch_height_max)
         self.delta_arch = toolbox.util.map_range_clamped(self.len_to_target, 0, 1000, 1, max_arch_delta)

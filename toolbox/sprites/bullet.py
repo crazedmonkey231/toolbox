@@ -18,7 +18,7 @@ class Bullet(Projectile):
         self.rect.center = pos
         self.target = Vector2(pygame.mouse.get_pos())
         self.components.append(CompMovementArch(self, self.target, 300, destroy_on_dest=False))
-        # self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), True, 0.5, False))
+        self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), True, 0.5, False))
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)

@@ -62,6 +62,7 @@ class AssetRegistry(object):
             pygame_image = pygame.image.fromstring(
                 frame_rgba.tobytes(), frame_rgba.size, frame_rgba.mode
             )
+            pygame_image.set_colorkey((255, 255, 255, 255))
             surfaces.append(pygame_image)
         self.gif_registry[name_key] = surfaces
 
