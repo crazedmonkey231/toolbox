@@ -5,7 +5,7 @@ from typing import Sequence
 import numpy
 from numpy import ndarray
 import pygame
-from pygame import Surface, Rect
+from pygame import Surface, Rect, Vector2
 from pygame.sprite import Sprite, AbstractGroup
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
@@ -162,6 +162,37 @@ def float_movement_cos(amplitude: float = 25, speed: float = 1):
     time = pygame.time.get_ticks() / 1000
     delta = amplitude * math.cos(speed * time)
     return delta
+
+
+def gen_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: float = 100, max_arch_delta: float = 10,
+             inverse: bool = False):
+    points = []
+    inverse = -1 if inverse else 1
+    dist_target = target_pos - start_pos
+    dist_target_len = dist_target.length()
+    if dist_target_len > 0:
+        dist_target_norm = dist_target.normalize()
+        dist_target_abs = Vector2(abs(dist_target.x), abs(dist_target.y))
+
+        dist_target_delta = int(dist_target_len)
+
+        rect_x = start_pos.x
+
+        arch_height_max = max_arch_height
+
+        arch_height = clamp_value(dist_target_abs.x, 1, arch_height_max)
+        delta_arch = map_range_clamped(dist_target_len, 0, 1000, 1, max_arch_delta)
+
+        epsilon = 1e-6
+
+        for _ in range(dist_target_delta):
+            rect_x += dist_target_norm.x
+            norm_position = abs((rect_x - start_pos.x) / (dist_target_abs.x + epsilon))
+            rect_y = ((1 - norm_position) * start_pos.y + norm_position * target_pos.y -
+                      arch_height * inverse * delta_arch * norm_position * (1 - norm_position))
+            points.append(Vector2(rect_x, rect_y))
+    points.append(target_pos)
+    return points
 
 
 # Interpolates between color1 and color2 using a factor.
