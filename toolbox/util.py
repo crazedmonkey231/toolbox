@@ -164,8 +164,23 @@ def float_movement_cos(amplitude: float = 25, speed: float = 1):
     return delta
 
 
-def gen_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: float = 100, max_arch_delta: float = 10,
-             inverse: bool = False):
+def generate_line(start_pos: Vector2, target_pos: Vector2):
+    points = []
+    dist_target = target_pos - start_pos
+    dist_target_len = dist_target.length()
+    if dist_target_len > 0:
+        dist_target_norm = dist_target.normalize()
+        rect_x = start_pos.x
+        rect_y = start_pos.y
+        for _ in range(int(dist_target_len)):
+            rect_x += dist_target_norm.x
+            rect_y += dist_target_norm.y
+            points.append(Vector2(rect_x, rect_y))
+    return points
+
+
+def generate_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: float = 100, max_arch_delta: float = 10,
+                  inverse: bool = False):
     points = []
     inverse = -1 if inverse else 1
     dist_target = target_pos - start_pos
@@ -173,25 +188,30 @@ def gen_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: float = 1
     if dist_target_len > 0:
         dist_target_norm = dist_target.normalize()
         dist_target_abs = Vector2(abs(dist_target.x), abs(dist_target.y))
-
         dist_target_delta = int(dist_target_len)
-
         rect_x = start_pos.x
-
         arch_height_max = max_arch_height
-
         arch_height = clamp_value(dist_target_abs.x, 1, arch_height_max)
         delta_arch = map_range_clamped(dist_target_len, 0, 1000, 1, max_arch_delta)
-
         epsilon = 1e-6
-
         for _ in range(dist_target_delta):
             rect_x += dist_target_norm.x
             norm_position = abs((rect_x - start_pos.x) / (dist_target_abs.x + epsilon))
             rect_y = ((1 - norm_position) * start_pos.y + norm_position * target_pos.y -
                       arch_height * inverse * delta_arch * norm_position * (1 - norm_position))
             points.append(Vector2(rect_x, rect_y))
-    points.append(target_pos)
+    return points
+
+
+def generate_circle(center_pos: Vector2, radius: float = 5, start_x_offset: float = 0, start_y_offset: float = 0):
+    points = []
+    start_x = center_pos.x + radius * start_x_offset
+    start_y = center_pos.y + radius * start_y_offset
+    for angle in range(360):
+        r_angle = math.radians(angle)
+        rect_x = start_x + math.cos(r_angle) * radius
+        rect_y = start_y + math.sin(r_angle) * radius
+        points.append(Vector2(rect_x, rect_y))
     return points
 
 

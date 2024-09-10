@@ -1,43 +1,77 @@
 import math
-import pygame
 from pygame import Vector2
 import shared
-from config import SCREEN_SIZE_V2
+import toolbox.util
 from toolbox.game_objects import GameObjectComponent, GameObject
 
 
-class CompMovement(GameObjectComponent):
-    def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, needs_img_rotation: bool = True,
-                 destroy_on_dest: bool = True):
+# CompMovementBase
+class CompMovementBase(GameObjectComponent):
+    def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, update_rotation: bool = True,
+                 destroy_on_dest: bool = True, is_cyclic: bool = False):
         super().__init__(parent)
-        self.original_image = parent.image
-        self.target_pos: Vector2 = target_pos
-        self.move_speed = move_speed
-        self.is_targeting = True
-        self.needs_img_rotation = needs_img_rotation
+        self.start_pos = Vector2(self.parent.rect.center)
+        self.target_pos = target_pos
         self.destroy_on_dest = destroy_on_dest
-        self.distance_buffer = 5
-        delta_pos = self.target_pos - Vector2(parent.rect.center)
-        rot = math.atan2(delta_pos.y, delta_pos.x)
-        self.img_rot = 2 * math.pi - rot
-        self.parent.rotation = math.degrees(self.img_rot)
-        self.dx = math.cos(rot) * self.move_speed
-        self.dy = math.sin(rot) * self.move_speed
+        self.move_speed = move_speed
+        self.update_rotation = update_rotation
+        self.is_cyclic = is_cyclic
+        self.travel_delta = 1 / move_speed
+        self.travel_path: list[Vector2] = None
+        self.travel_path_len: int = -1
+        self.travel_idx = 0
+        self.travel_timer = 0
 
     def comp_update(self, *args, **kwargs):
-        if self.is_targeting:
-            parent = self.parent
-            center = Vector2(parent.rect.center)
-            if 0 <= center.x <= SCREEN_SIZE_V2.x and 0 <= center.y <= SCREEN_SIZE_V2.y:
-                delta_time = shared.delta_time
-                new_center = center + Vector2(self.dx * delta_time, self.dy * delta_time)
-                if self.needs_img_rotation:
-                    parent.image = pygame.transform.rotate(self.original_image, parent.rotation)
-                    parent.rect = parent.image.get_rect(center=new_center)
-                    parent.mask = pygame.mask.from_surface(parent.image)
-                else:
-                    parent.rect.center = new_center
-            else:
-                self.is_targeting = False
-        elif not self.is_targeting and self.destroy_on_dest:
-            self.parent.kill()
+        if self.travel_path:
+            self.travel_timer += shared.delta_time
+            if self.travel_timer >= self.travel_delta:
+                self.travel_timer = 0
+                self.travel_idx += int(self.move_speed * shared.delta_time)
+                if self.is_cyclic:
+                    self.travel_idx %= self.travel_path_len
+                elif self.travel_idx >= self.travel_path_len:
+                    self.travel_idx = self.travel_path_len - 1
+                    self.needs_update = False
+                    if self.destroy_on_dest:
+                        self.parent.kill()
+                rect = self.parent.rect
+                new_center = self.travel_path[self.travel_idx]
+                if self.update_rotation:
+                    delta_pos = new_center - Vector2(rect.center)
+                    if delta_pos.length() > 0:
+                        rot = math.atan2(delta_pos.y, delta_pos.x)
+                        self.parent.rotation = math.degrees(2 * math.pi - rot)
+                rect.center = new_center
+        elif self.travel_timer > 0:
+            self.travel_timer = 0
+
+
+# CompMovementLine
+class CompMovementLine(CompMovementBase):
+    def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, update_rotation: bool = True,
+                 destroy_on_dest: bool = True, is_cyclic: bool = False):
+        super().__init__(parent, target_pos, move_speed, update_rotation, destroy_on_dest, is_cyclic)
+        self.travel_path = toolbox.util.generate_line(self.start_pos, target_pos)
+        self.travel_path_len = len(self.travel_path)
+
+
+# CompMovementArch
+class CompMovementArch(CompMovementBase):
+    def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, update_rotation: bool = True,
+                 destroy_on_dest: bool = True, max_arch_height: float = 100, max_arch_delta: float = 10,
+                 inverse: bool = False, is_cyclic: bool = False):
+        super().__init__(parent, target_pos, move_speed, update_rotation, destroy_on_dest, is_cyclic)
+        self.travel_path = toolbox.util.generate_arch(self.start_pos, target_pos, max_arch_height, max_arch_delta,
+                                                      inverse)
+        self.travel_path_len = len(self.travel_path)
+
+
+# CompMovementCircle
+class CompMovementCircle(CompMovementBase):
+    def __init__(self, parent: GameObject, target_pos: Vector2, move_speed: float = 0, update_rotation: bool = True,
+                 destroy_on_dest: bool = False, radius: float = 200, start_x_offset: float = 0,
+                 start_y_offset: float = 0, is_cyclic: bool = True):
+        super().__init__(parent, target_pos, move_speed, update_rotation, destroy_on_dest, is_cyclic)
+        self.travel_path = toolbox.util.generate_circle(self.start_pos, radius, start_x_offset, start_y_offset)
+        self.travel_path_len = len(self.travel_path)

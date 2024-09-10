@@ -6,16 +6,18 @@ import PIL
 
 # Normal imports.
 import pygame
-from config import SCREEN_SIZE, FPS, RGB_WHITE
+
+import config
+from config import SCREEN_SIZE, FPS, RGB_WHITE, DEBUG
 from toolbox.splash_screen import SplashScreen
-from toolbox.sprites.gameplayer import GamePlayer
 import shared
 from shared import renderer_group
 from toolbox.resistry import asset_registry
 
 # Quick print so imports aren't lost on refactor
-print(numpy)
-print(PIL)
+if DEBUG:
+    print(numpy)
+    print(PIL)
 
 #
 # pygame setup
