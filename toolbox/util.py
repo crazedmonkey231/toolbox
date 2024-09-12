@@ -326,31 +326,39 @@ def apply_damage(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: fl
 #
 
 # Create initial rect particle
-def create_rect_particle(draw_surface: Surface, particles: list, color, rect: Rect, size: tuple, width: float):
+def create_rect_particle(draw_surface: Surface, particles: list, color, center: Vector2, size: tuple, width: float):
     s_width, s_height = size
     width_h = s_width // 2
     height_h = s_height // 2
-    left = rect.centerx - width_h
-    right = rect.centery - height_h
+    left = center.x - width_h
+    right = center.y - height_h
     particles.append(pygame.draw.rect(draw_surface, color, (left, right, s_width, s_height), width))
-
-
-# Create initial circle particle
-def create_circle_particle(draw_surface: Surface, particles: list, color, center: tuple, radius: tuple, width: float):
-    particles.append(pygame.draw.circle(draw_surface, color, center, radius, width))
 
 
 # Update rect particles
 def update_rect_particles(draw_surface: Surface, particles: list, time_alive: float, decay_factor: float = 2.0,
                           color=(255, 255, 255, 255)):
     n_trails = [t for t in particles if t.size[0] != 0 and t.size[1] != 0]
+    clear_rect_particles(draw_surface, n_trails)
     for trail in n_trails:
-        pygame.draw.rect(draw_surface, (0, 0, 0, 0), trail, trail.width)
-        r = trail
+        r: Rect = trail
         if time_alive % decay_factor == 0:
             r = trail.scale_by(.99, .99)
+            r.center = trail.center
         trail[:] = pygame.draw.rect(draw_surface, color, r, r.width)
     particles[:] = n_trails
+
+
+# Clear rect particles
+def clear_rect_particles(draw_surface: Surface, particles: list):
+    n_trails = [t for t in particles if t.size[0] != 0 and t.size[1] != 0]
+    for trail in n_trails:
+        pygame.draw.rect(draw_surface, (0, 0, 0, 0), trail, trail.width)
+
+
+# Create initial circle particle
+def create_circle_particle(draw_surface: Surface, particles: list, color, center: Vector2, radius: tuple, width: float):
+    particles.append(pygame.draw.circle(draw_surface, color, center, radius, width))
 
 
 # Update circle particles
@@ -365,6 +373,12 @@ def update_circle_particles(draw_surface: Surface, particles: list, time_alive: 
         trail[:] = pygame.draw.circle(draw_surface, color, trail.center, r.width // 2)
     particles[:] = n_trails
 
+
+# Todo clear circle particles
+def clear_circle_particles(draw_surface: Surface, particles: list):
+    n_trails = [t for t in particles if t.size[0] != 0 and t.size[1] != 0]
+    for trail in n_trails:
+        pygame.draw.rect(draw_surface, (0, 0, 0, 0), trail, trail.width)
 #
 # End particle utils
 #

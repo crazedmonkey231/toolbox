@@ -7,7 +7,7 @@ import PIL
 # Normal imports.
 import pygame
 
-from config import SCREEN_SIZE, FPS, RGB_WHITE, DEBUG
+from config import SCREEN_SIZE, FPS, DEBUG, RGB_BLACK
 from toolbox import game_objects
 from toolbox.achievment_system import Achievements
 from toolbox.experiences.splash_screen import SplashScreen
@@ -28,9 +28,15 @@ shared.achievement_system = Achievements()
 # pygame setup
 #
 pygame.init()
+
 shared.screen = pygame.display.set_mode(SCREEN_SIZE)
+
 shared.overlay = shared.screen.copy().convert_alpha()
 shared.overlay.fill((0, 0, 0, 0))
+
+shared.underlay = shared.screen.copy().convert_alpha()
+shared.underlay.fill((0, 0, 0, 0))
+
 shared.clock = pygame.time.Clock()
 
 
@@ -56,7 +62,8 @@ while shared.running:
             shared.running = False
 
     # Draw sprites to canvas
-    shared.screen.fill(RGB_WHITE)
+    shared.screen.fill(RGB_BLACK)
+    shared.screen.blit(shared.underlay, (0, 0))
     renderer_group.update()
     renderer_group.draw(shared.screen)
     shared.screen.blit(shared.overlay, (0, 0))

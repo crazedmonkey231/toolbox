@@ -1,3 +1,4 @@
+from pygame import Surface, Clock
 from pygame.sprite import Group, GroupSingle, LayeredUpdates
 
 # Shared systems
@@ -6,12 +7,13 @@ achievement_system = None
 loaded_experience = None
 
 # Pygame stuff
-screen = None
-overlay = None
-clock = None
-running = True
-delta_time = 0
-delta_slowdown = 1000
+screen: Surface = None
+underlay: Surface = None
+overlay: Surface = None
+clock: Clock = None
+running: bool = True
+delta_time: float = 0
+delta_slowdown: float = 1000
 
 # Main renderer
 renderer_group: LayeredUpdates = LayeredUpdates()

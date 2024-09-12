@@ -17,6 +17,7 @@ def change_experience(new_experience: type[Experience]):
     for name, value in vars(shared).items():
         if value and isinstance(value, AbstractGroup):
             value.empty()
+    shared.overlay.fill((0, 0, 0, 0))
     shared.loaded_experience = new_experience()
     shared.loaded_experience.load_sprites()
 
@@ -46,6 +47,8 @@ class GameObject(Sprite):
 
     def kill(self):
         self.on_end_play()
+        for comp in self.components:
+            comp.comp_kill()
         super().kill()
 
     def on_end_play(self):
@@ -75,6 +78,9 @@ class GameObjectComponent(object):
     def __init__(self, parent: GameObject):
         self.parent: GameObject = parent
         self.needs_update = True
+
+    def comp_kill(self):
+        pass
 
     def comp_update(self, *args, **kwargs):
         pass
