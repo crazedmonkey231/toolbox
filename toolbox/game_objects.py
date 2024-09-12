@@ -1,7 +1,20 @@
-import pygame
 from pygame import Surface, Mask, Vector2
-from pygame.sprite import Sprite
+from pygame.sprite import Sprite, AbstractGroup
+import shared
 from shared import *
+
+
+# Todo Experience
+class Experience(object):
+    def __init__(self):
+        pass
+
+
+def change_experience(new_experience: type[Experience]):
+    for name, value in vars(shared).items():
+        if value and isinstance(value, AbstractGroup):
+            value.empty()
+    new_experience()
 
 
 # Todo GameObject
