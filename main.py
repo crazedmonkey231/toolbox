@@ -45,7 +45,7 @@ gifs = ['fire.gif']
 # Load assets
 shared.asset_registry.load_registry(images, sounds, gifs)
 
-# Starting Sprite
+# Load splash screen
 game_objects.change_experience(SplashScreen)
 
 # Main loop
