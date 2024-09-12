@@ -14,9 +14,10 @@ class GameObject(Sprite):
         self.rotation = 0
         self.components: list[GameObjectComponent] = list()
         super().__init__(groups)
-        self.image = Surface((48, 48)).convert_alpha()
-        self.image.fill((255, 0, 255, 255))
+        self.image = Surface((48, 48)).convert()
+        self.image.fill((255, 0, 255))
         self.rect = self.image.get_rect()
+        self.rect.center = kwargs["center"] if "center" in kwargs else Vector2(0, 0)
 
     def update(self, *args, **kwargs):
         if self.components:
@@ -80,25 +81,22 @@ class Experience(GameObject):
 
 # Todo Thing
 class Thing(GameObject):
-    def __init__(self, pos):
-        super().__init__(0, [renderer_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(0, [renderer_group], args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
 
 
 # Todo Pickup
 class Pickup(GameObject):
-    def __init__(self, pos):
-        super().__init__(0, [renderer_group, pickup_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(0, [renderer_group, pickup_group], *args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
 
 
 # Todo Player
 class Player(GameObject):
-    def __init__(self, pos):
-        super().__init__(1, [renderer_group, player_ref_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(1, [renderer_group, player_ref_group], *args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args, **kwargs):
@@ -107,9 +105,8 @@ class Player(GameObject):
 
 # Todo Enemy
 class Enemy(GameObject):
-    def __init__(self, pos):
-        super().__init__(1, [renderer_group, enemy_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(1, [renderer_group, enemy_group], *args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args, **kwargs):
@@ -118,9 +115,8 @@ class Enemy(GameObject):
 
 # Todo Projectile
 class Projectile(GameObject):
-    def __init__(self, pos):
-        super().__init__(2, [renderer_group, projectile_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(2, [renderer_group, projectile_group], *args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args, **kwargs):
@@ -129,9 +125,8 @@ class Projectile(GameObject):
 
 # Todo Effect
 class Effect(GameObject):
-    def __init__(self, pos):
-        super().__init__(3, [renderer_group, effect_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(3, [renderer_group, effect_group], *args, **kwargs)
         # self.mask: Mask = pygame.mask.from_surface(self.image)
         
     def update(self, *args, **kwargs):
@@ -140,9 +135,8 @@ class Effect(GameObject):
 
 # Todo Widget
 class Widget(GameObject):
-    def __init__(self, pos):
-        super().__init__(4, [renderer_group, widget_group])
-        self.rect.center = pos
+    def __init__(self, *args, **kwargs):
+        super().__init__(4, [renderer_group, widget_group], *args, **kwargs)
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)

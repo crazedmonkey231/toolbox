@@ -216,13 +216,23 @@ def generate_circle(center_pos: Vector2, radius: float = 5, start_x_offset: floa
 
 
 # Interpolates between color1 and color2 using a factor.
+def interpolate_color_rgb(color1, color2, factor) -> tuple[int, int, int]:
+    r1, g1, b1 = color1
+    r2, g2, b2 = color2
+    r = clamp_value(int(r1 + (r2 - r1) * factor), 0, 255)
+    g = clamp_value(int(g1 + (g2 - g1) * factor), 0, 255)
+    b = clamp_value(int(b1 + (b2 - b1) * factor), 0, 255)
+    return r, g, b
+
+
+# Interpolates between color1 and color2 using a factor.
 def interpolate_color_rgba(color1, color2, factor) -> tuple[int, int, int, int]:
     r1, g1, b1, a1 = color1
     r2, g2, b2, a2 = color2
-    r = int(r1 + (r2 - r1) * factor)
-    g = int(g1 + (g2 - g1) * factor)
-    b = int(b1 + (b2 - b1) * factor)
-    a = int(a1 + (a2 - a1) * factor)
+    r = clamp_value(int(r1 + (r2 - r1) * factor), 0, 255)
+    g = clamp_value(int(g1 + (g2 - g1) * factor), 0, 255)
+    b = clamp_value(int(b1 + (b2 - b1) * factor), 0, 255)
+    a = clamp_value(int(a1 + (a2 - a1) * factor), 0, 255)
     return r, g, b, a
 
 

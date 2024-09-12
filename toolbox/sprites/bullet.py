@@ -11,11 +11,10 @@ from toolbox.resistry import asset_registry
 
 
 class Bullet(Projectile):
-    def __init__(self, pos):
-        super().__init__(pos)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         # self.image, self.rect = asset_registry.get_image("bullet")
         # self.mask: Mask = pygame.mask.from_surface(self.image)
-        self.rect.center = pos
         self.target = Vector2(pygame.mouse.get_pos())
         # self.components.append(CompMouseFollowerDirection(self))
         self.c_circle = CompMovementCircle(self, None, 200, update_rotation=True, destroy_on_dest=False)

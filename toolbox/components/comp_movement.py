@@ -54,6 +54,7 @@ class CompMovementLine(CompMovementBase):
         super().__init__(parent, target_pos, move_speed, update_rotation, destroy_on_dest, is_cyclic)
         self.travel_path = toolbox.util.generate_line(self.start_pos, target_pos)
         self.travel_path_len = len(self.travel_path)
+        self.parent.rect.center = self.travel_path[0]
 
 
 # CompMovementArch
@@ -65,6 +66,7 @@ class CompMovementArch(CompMovementBase):
         self.travel_path = toolbox.util.generate_arch(self.start_pos, target_pos, max_arch_height, max_arch_delta,
                                                       inverse)
         self.travel_path_len = len(self.travel_path)
+        self.parent.rect.center = self.travel_path[0]
 
 
 # CompMovementCircle
@@ -75,3 +77,4 @@ class CompMovementCircle(CompMovementBase):
         super().__init__(parent, target_pos, move_speed, update_rotation, destroy_on_dest, is_cyclic)
         self.travel_path = toolbox.util.generate_circle(self.start_pos, radius, start_x_offset, start_y_offset)
         self.travel_path_len = len(self.travel_path)
+        self.parent.rect.center = self.travel_path[0]

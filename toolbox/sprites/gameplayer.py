@@ -1,14 +1,10 @@
 import pygame
-from pygame import Vector2, Mask, Surface
-
+from pygame import Mask
 import shared
-from toolbox.components.comp_draw import CompDraw
 from toolbox.components.comp_gif_player import CompGifPlayer
-from toolbox.components.comp_grow import CompGrow
 from toolbox.components.comp_input import CompInput
 from toolbox.components.comp_launcher import CompTimedLauncher
-from toolbox.components.comp_mouse_follower import CompMouseFollowerDirection, CompMouseFollowerPosition
-from toolbox.game_objects import Player, Projectile
+from toolbox.game_objects import Player
 from toolbox.resistry import asset_registry
 from toolbox.sprites.bullet import Bullet
 
@@ -17,17 +13,15 @@ class GamePlayer(Player):
     def __init__(self, pos):
         super().__init__(pos)
         self.player_pos = pygame.Vector2(pos)
-        self.move_vector = Vector2(200, 200)
-        # self.image, self.rect = asset_registry.get_image('fsh')
-        self.image = Surface((400, 400)).convert_alpha()
-        self.image.fill((0, 0, 0, 0))
-        self.rect = self.image.get_rect(center=self.player_pos)
+        self.image, self.rect = asset_registry.get_image('fsh')
+        # self.image = Surface((400, 400)).convert_alpha()
+        # self.image.fill((0, 0, 0, 0))
+        # self.rect = self.image.get_rect(center=self.player_pos)
         self.mask: Mask = pygame.mask.from_surface(self.image)
         self.components.append(CompInput(self))
-        self.comp_launcher = CompTimedLauncher(self, Bullet, 0.5)
+        self.comp_launcher = CompTimedLauncher(self, Bullet, 0.1)
         self.components.append(self.comp_launcher)
-        # self.components.append(CompDraw(self))
-        self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), True, 0.5, False))
+        # self.components.append(CompGifPlayer(self, asset_registry.get_gif("fire"), True, 0.5, False))
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)

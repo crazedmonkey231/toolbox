@@ -5,19 +5,6 @@ import toolbox.util
 from toolbox.game_objects import GameObject, GameObjectComponent, Projectile
 
 
-class CompLauncher(GameObjectComponent):
-    def __init__(self, parent: GameObject, projectile: type[Projectile]):
-        super().__init__(parent)
-        self.needs_update = False
-        self.projectile: type[Projectile] = projectile
-
-    def launch_projectile(self):
-        if self.projectile:
-            parent = self.parent
-            center = Vector2(parent.rect.center)
-            self.projectile(center)
-
-
 class CompTimedLauncher(GameObjectComponent):
     def __init__(self, parent: GameObject, projectile: type[Projectile], cooldown: float = 1,
                  launch_sound: Sound = None):
@@ -28,13 +15,10 @@ class CompTimedLauncher(GameObjectComponent):
         self.projectile: type[Projectile] = projectile
         self.is_firing = False
         self.launch_sound = launch_sound
-        self.projectile_ref: Projectile = None
 
-    def launch_projectile(self):
+    def launch_projectile(self, *args, **kwargs):
         if self.projectile:
-            parent = self.parent
-            center = Vector2(parent.rect.center)
-            self.projectile_ref = self.projectile(center)
+            self.projectile(*args, **{"center": Vector2(self.parent.rect.center), **kwargs})
             if self.launch_sound:
                 self.launch_sound.play()
 
