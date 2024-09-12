@@ -18,7 +18,8 @@ class CompTimedLauncher(GameObjectComponent):
 
     def launch_projectile(self, *args, **kwargs):
         if self.projectile:
-            self.projectile(*args, **{"center": Vector2(self.parent.rect.center), **kwargs})
+            new_wkargs = {"center": Vector2(self.parent.rect.center), **kwargs}
+            self.projectile(*args, **new_wkargs)
             if self.launch_sound:
                 self.launch_sound.play()
 

@@ -7,9 +7,8 @@ import PIL
 # Normal imports.
 import pygame
 
-import config
 from config import SCREEN_SIZE, FPS, RGB_WHITE, DEBUG
-from toolbox.splash_screen import SplashScreen
+from toolbox.experiences.splash_screen import SplashScreen
 import shared
 from shared import renderer_group
 from toolbox.resistry import asset_registry

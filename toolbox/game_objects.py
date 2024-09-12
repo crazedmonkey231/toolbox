@@ -67,18 +67,6 @@ def get_component_by_type(game_object: GameObject, comp_type: type[GameObjectCom
     return [comp for comp in game_object.components if isinstance(comp, comp_type)]
 
 
-# Todo Experience
-class Experience(GameObject):
-    def __init__(self):
-        super().__init__(0, renderer_group)
-        self.image = Surface((1, 1)).convert_alpha()
-        self.image.fill((0, 0, 0, 0))
-        self.rect = self.image.get_rect()
-
-    def update(self, *args, **kwargs):
-        super().update(*args, **kwargs)
-
-
 # Todo Thing
 class Thing(GameObject):
     def __init__(self, *args, **kwargs):
