@@ -313,8 +313,8 @@ def apply_damage(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: fl
                        "affected_stat": affected_stat,
                        "damage_amount": damage_amount * crit_multi if is_crit else damage_amount
                        }
-        new_args = {**calc_kwargs, **kwargs}
-        damage_dealt = method(*args, **new_args)
+        new_kwargs = {**calc_kwargs, **kwargs}
+        damage_dealt = method(*args, **new_kwargs)
     return damage_dealt
 
 
