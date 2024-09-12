@@ -5,7 +5,6 @@ from toolbox.components.comp_gif_player import CompGifPlayer
 from toolbox.components.comp_input import CompInput
 from toolbox.components.comp_launcher import CompTimedLauncher
 from toolbox.game_objects import Player
-from toolbox.resistry import asset_registry
 from toolbox.sprites.bullet import Bullet
 
 

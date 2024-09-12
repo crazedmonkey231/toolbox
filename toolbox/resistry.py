@@ -69,6 +69,3 @@ class AssetRegistry(object):
     def get_gif(self, name: str) -> list[Surface]:
         gif = [surface.copy() for surface in self.gif_registry[name]]
         return gif
-
-
-asset_registry = AssetRegistry()
