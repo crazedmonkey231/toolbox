@@ -13,7 +13,7 @@ class GamePlayer(Player):
     def __init__(self, pos):
         super().__init__(pos)
         self.player_pos = pygame.Vector2(pos)
-        self.image, self.rect = asset_registry.get_image('fsh')
+        self.image, self.rect = shared.asset_registry.get_image('fsh')
         # self.image = Surface((400, 400)).convert_alpha()
         # self.image.fill((0, 0, 0, 0))
         # self.rect = self.image.get_rect(center=self.player_pos)

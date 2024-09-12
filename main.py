@@ -8,15 +8,21 @@ import PIL
 import pygame
 
 from config import SCREEN_SIZE, FPS, RGB_WHITE, DEBUG
+from toolbox import game_objects
+from toolbox.achievment_system import Achievements
 from toolbox.experiences.splash_screen import SplashScreen
 import shared
 from shared import renderer_group
-from toolbox.resistry import asset_registry
+from toolbox.resistry import AssetRegistry
 
 # Quick print so imports aren't lost on refactor
 if DEBUG:
     print(numpy)
     print(PIL)
+
+# Systems setup
+shared.asset_registry = AssetRegistry()
+shared.achievement_system = Achievements()
 
 #
 # pygame setup
@@ -37,10 +43,10 @@ gifs = ['fire.gif']
 
 
 # Load assets
-asset_registry.load_registry(images, sounds, gifs)
+shared.asset_registry.load_registry(images, sounds, gifs)
 
 # Starting Sprite
-SplashScreen()
+game_objects.change_experience(SplashScreen)
 
 # Main loop
 while shared.running:

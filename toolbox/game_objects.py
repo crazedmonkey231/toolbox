@@ -9,12 +9,16 @@ class Experience(object):
     def __init__(self):
         pass
 
+    def load_sprites(self):
+        pass
+
 
 def change_experience(new_experience: type[Experience]):
     for name, value in vars(shared).items():
         if value and isinstance(value, AbstractGroup):
             value.empty()
-    new_experience()
+    shared.loaded_experience = new_experience()
+    shared.loaded_experience.load_sprites()
 
 
 # Todo GameObject

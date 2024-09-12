@@ -1,12 +1,17 @@
 from pygame.sprite import Group, GroupSingle, LayeredUpdates
 
+# Shared systems
+asset_registry = None
+achievement_system = None
+loaded_experience = None
+
+# Pygame stuff
 screen = None
 overlay = None
 clock = None
 running = True
 delta_time = 0
 delta_slowdown = 1000
-epsilon = 1e-6
 
 # Main renderer
 renderer_group: LayeredUpdates = LayeredUpdates()
@@ -20,4 +25,3 @@ pickup_group: Group = Group()
 effect_group: Group = Group()
 projectile_group: Group = Group()
 widget_group: Group = Group()
-
