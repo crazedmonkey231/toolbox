@@ -191,7 +191,7 @@ def generate_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: floa
         dist_target_delta = int(dist_target_len)
         rect_x = start_pos.x
         arch_height_max = max_arch_height
-        arch_height = clamp_value(dist_target_abs.x, 1, arch_height_max)
+        arch_height = clamp_value(dist_target_abs.x, 0, arch_height_max)
         delta_arch = map_range_clamped(dist_target_len, 0, 1000, 1, max_arch_delta)
         epsilon = 1e-6
         for _ in range(dist_target_delta):
