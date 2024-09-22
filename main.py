@@ -9,13 +9,12 @@ import pygame
 
 from config import SCREEN_SIZE, FPS, DEBUG, RGB_BLACK
 import toolbox
-from toolbox.achievment_system import Achievements
+from toolbox.systems.achievement.achievments import Achievements
 from toolbox.levels.splash_screen import SplashScreen
 import shared
 from shared import renderer_group
 from toolbox.resistry import AssetRegistry
-from toolbox.shop import Shop
-from toolbox.stock_market import StockMarket
+from toolbox.systems.exchange.exchange import Exchange
 
 # Quick print so imports aren't lost on refactor
 if DEBUG:
@@ -25,13 +24,8 @@ if DEBUG:
 # Asset registry
 shared.asset_registry = AssetRegistry()
 
-#
-# Systems setup
-# Enable and disable per project
-#
+# Achievement system
 shared.achievement_system = Achievements()
-shared.shop = Shop()
-shared.stock_market = StockMarket()
 
 #
 # pygame setup

@@ -1,17 +1,13 @@
 from pygame import Surface, Clock
 from pygame.sprite import Group, GroupSingle, LayeredUpdates
-
-from toolbox.achievment_system import Achievements
+from toolbox.systems.achievement.achievments import Achievements
 from toolbox.level import Level
 from toolbox.resistry import AssetRegistry
-from toolbox.shop import Shop
-from toolbox.stock_market import StockMarket
+from toolbox.systems.exchange.exchange import Exchange
 
 # Shared systems
 asset_registry: AssetRegistry = None
 achievement_system: Achievements = None
-shop: Shop = None
-stock_market: StockMarket = None
 current_level: Level = None
 
 # Pygame stuff

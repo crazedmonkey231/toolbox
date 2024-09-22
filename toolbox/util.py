@@ -1,4 +1,6 @@
 import math
+import random
+import string
 from collections import defaultdict
 from typing import Sequence
 import numpy
@@ -7,6 +9,7 @@ import pygame
 from pygame import Surface, Rect, Vector2
 from pygame.sprite import Sprite, AbstractGroup
 import config
+import shared
 from toolbox.level import Level
 
 # Check mixer
@@ -146,7 +149,7 @@ def scale_image_smooth(original_image: Surface, new_size: Sequence[float], cente
 # rect_y = 250 + self.float_movement_sin()
 # self.rect.center = (center[0], rect_y)
 def float_movement_sin(amplitude: float = 25, speed: float = 1):
-    time = pygame.time.get_ticks() / 1000
+    time = pygame.time.get_ticks() / shared.delta_slowdown
     delta = amplitude * math.sin(speed * time)
     return delta
 
@@ -157,11 +160,36 @@ def float_movement_sin(amplitude: float = 25, speed: float = 1):
 # rect_y = 250 + self.float_movement_cos()
 # self.rect.center = (center[0], rect_y)
 def float_movement_cos(amplitude: float = 25, speed: float = 1):
-    time = pygame.time.get_ticks() / 1000
+    time = pygame.time.get_ticks() / shared.delta_slowdown
     delta = amplitude * math.cos(speed * time)
     return delta
 
 
+# Generate simple id of a given size
+def generate_simple_id(size: int = 10):
+    characters = string.ascii_letters + string.digits
+    random_id = ''.join(random.choices(characters, k=size))
+    return random_id
+
+
+# Grid generator
+def generate_grid(grid_size: Sequence[int], grid_tile_size: Sequence[int], grid_tile_padding: Sequence[int] = (0, 0),
+                  grid_tile_offset: Sequence[int] = (0, 0)):
+    width = grid_size[0]
+    height = grid_size[1]
+    s = width * height
+    points = []
+    for i in range(s):
+        row_dist = grid_tile_size[0] + grid_tile_padding[0]
+        col_dist = grid_tile_size[1] + grid_tile_padding[1]
+        row = ((i // height) * row_dist) + grid_tile_offset[0]
+        col = ((i % height) * col_dist) + grid_tile_offset[1]
+        point = (row, col)
+        points.append(point)
+    return points
+
+
+# Line generator
 def generate_line(start_pos: Vector2, target_pos: Vector2):
     points = []
     dist_target = target_pos - start_pos
@@ -177,6 +205,7 @@ def generate_line(start_pos: Vector2, target_pos: Vector2):
     return points
 
 
+# Arch generator
 def generate_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: float = 100, max_arch_delta: float = 10,
                   inverse: bool = False):
     points = []
@@ -201,6 +230,7 @@ def generate_arch(start_pos: Vector2, target_pos: Vector2, max_arch_height: floa
     return points
 
 
+# Circle generator
 def generate_circle(center_pos: Vector2, radius: float = 5, start_x_offset: float = 0, start_y_offset: float = 0):
     points = []
     start_x = center_pos.x + radius * start_x_offset
