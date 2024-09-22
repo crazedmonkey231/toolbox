@@ -8,21 +8,30 @@ import PIL
 import pygame
 
 from config import SCREEN_SIZE, FPS, DEBUG, RGB_BLACK
-from toolbox import game_objects
+import toolbox
 from toolbox.achievment_system import Achievements
-from toolbox.experiences.splash_screen import SplashScreen
+from toolbox.levels.splash_screen import SplashScreen
 import shared
 from shared import renderer_group
 from toolbox.resistry import AssetRegistry
+from toolbox.shop import Shop
+from toolbox.stock_market import StockMarket
 
 # Quick print so imports aren't lost on refactor
 if DEBUG:
     print(numpy)
     print(PIL)
 
-# Systems setup
+# Asset registry
 shared.asset_registry = AssetRegistry()
+
+#
+# Systems setup
+# Enable and disable per project
+#
 shared.achievement_system = Achievements()
+shared.shop = Shop()
+shared.stock_market = StockMarket()
 
 #
 # pygame setup
@@ -39,7 +48,6 @@ shared.underlay.fill((0, 0, 0, 0))
 
 shared.clock = pygame.time.Clock()
 
-
 #
 # Load Registry
 #
@@ -52,7 +60,7 @@ gifs = ['fire.gif']
 shared.asset_registry.load_registry(images, sounds, gifs)
 
 # Load splash screen
-game_objects.change_experience(SplashScreen)
+toolbox.util.change_level(SplashScreen)
 
 # Main loop
 while shared.running:

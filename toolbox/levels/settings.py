@@ -1,7 +1,7 @@
-from toolbox.game_objects import Experience
+from toolbox.level import Level
 
 
-class Settings(Experience):
+class Settings(Level):
     def __init__(self):
         super().__init__()
 

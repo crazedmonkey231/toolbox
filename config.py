@@ -43,12 +43,22 @@ GRID_SIZE: int = CANVAS_WIDTH // GRID_WIDTH
 CELL_SIZE: int = CANVAS_WIDTH // GRID_SIZE
 DIRECTIONS: list[tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
+# Stock market
+HIGH: str = "High"
+LOW: str = "Low"
+NEUTRAL: str = "Neutral"
+DECREASING: str = "Decreasing"
+INCREASING: str = "Increasing"
+
 # Colors RGB
 RGB_WHITE: tuple[int, int, int] = (255, 255, 255)
 RGB_BLACK: tuple[int, int, int] = (0, 0, 0)
 RGB_RED: tuple[int, int, int] = (255, 0, 0)
 RGB_GREEN: tuple[int, int, int] = (0, 255, 0)
 RGB_BLUE: tuple[int, int, int] = (0, 0, 255)
+RGB_YELLOW: tuple[int, int, int] = (255, 255, 0)
+RGB_CYAN: tuple[int, int, int] = (0, 255, 255)
+RGB_PURPLE: tuple[int, int, int] = (255, 0, 255)
 
 # Colors RGBA
 RGBA_WHITE: tuple[int, int, int, int] = (255, 255, 255, 255)
@@ -56,3 +66,6 @@ RGBA_BLACK: tuple[int, int, int, int] = (0, 0, 0, 255)
 RGBA_RED: tuple[int, int, int, int] = (255, 0, 0, 255)
 RGBA_GREEN: tuple[int, int, int, int] = (0, 255, 0, 255)
 RGBA_BLUE: tuple[int, int, int, int] = (0, 0, 255, 255)
+RGBA_YELLOW: tuple[int, int, int] = (255, 255, 0, 255)
+RGBA_CYAN: tuple[int, int, int] = (0, 255, 255, 255)
+RGBA_PURPLE: tuple[int, int, int] = (255, 0, 255, 255)

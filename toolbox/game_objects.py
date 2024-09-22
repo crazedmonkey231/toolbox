@@ -1,25 +1,8 @@
-from pygame import Surface, Mask, Vector2
-from pygame.sprite import Sprite, AbstractGroup
-import shared
+from collections import defaultdict
+
+from pygame import Mask, Vector2
+from pygame.sprite import Sprite
 from shared import *
-
-
-# Todo Experience
-class Experience(object):
-    def __init__(self):
-        pass
-
-    def load_sprites(self):
-        pass
-
-
-def change_experience(new_experience: type[Experience]):
-    for name, value in vars(shared).items():
-        if value and isinstance(value, AbstractGroup):
-            value.empty()
-    shared.overlay.fill((0, 0, 0, 0))
-    shared.loaded_experience = new_experience()
-    shared.loaded_experience.load_sprites()
 
 
 # Todo GameObject
@@ -42,7 +25,7 @@ class GameObject(Sprite):
             for comp in [c for c in self.components if c.needs_update]:
                 comp.comp_update(*args, **kwargs)
 
-    def on_damage(self, *args, **kwargs) -> float:
+    def on_damage(self, causer, is_crit: bool, crit_multi: float, affected_stat: str, damage_amount: float) -> float:
         pass
 
     def kill(self):
@@ -73,6 +56,17 @@ class GameObject(Sprite):
         pass
 
 
+# Todo apply_damage
+def apply_damage(causer: GameObject, target: GameObject, damage_amount: float,
+                 affected_stat: str = "health", is_crit: bool = False, crit_multi: float = 1.0) -> float:
+    damage = damage_amount * crit_multi if is_crit else damage_amount
+    damage_dealt = target.on_damage(causer, is_crit, crit_multi, affected_stat, damage)
+    if damage_dealt is not None:
+        return damage_dealt
+    else:
+        return 0
+
+
 # Todo GameObjectComponent
 class GameObjectComponent(object):
     def __init__(self, parent: GameObject):
@@ -86,6 +80,7 @@ class GameObjectComponent(object):
         pass
 
 
+# Todo get_component_by_type
 def get_component_by_type(game_object: GameObject, comp_type: type[GameObjectComponent]):
     return [comp for comp in game_object.components if isinstance(comp, comp_type)]
 
@@ -148,6 +143,15 @@ class Effect(GameObject):
 class Widget(GameObject):
     def __init__(self, *args, **kwargs):
         super().__init__(4, [renderer_group, widget_group], *args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        super().update(*args, **kwargs)
+
+
+# Todo WidgetEffect
+class WidgetEffect(GameObject):
+    def __init__(self, *args, **kwargs):
+        super().__init__(5, [renderer_group, effect_group], *args, **kwargs)
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)

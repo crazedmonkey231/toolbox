@@ -1,15 +1,13 @@
 import math
 from collections import defaultdict
 from typing import Sequence
-
 import numpy
 from numpy import ndarray
 import pygame
 from pygame import Surface, Rect, Vector2
 from pygame.sprite import Sprite, AbstractGroup
-from PIL import Image
-from PIL.GifImagePlugin import GifImageFile
-from config import DEBUG
+import config
+from toolbox.level import Level
 
 # Check mixer
 mixer_initialized = pygame.mixer or pygame.mixer.get_init()
@@ -26,7 +24,7 @@ if not pygame.font:
 
 # Logger
 def log(msg: str):
-    if DEBUG:
+    if config.DEBUG:
         print(msg)
 
 
@@ -237,85 +235,102 @@ def interpolate_color_rgba(color1, color2, factor) -> tuple[int, int, int, int]:
 
 
 # Simple text maker rgb
-def make_simple_text_rgb(text: str, size: int = 64, color: tuple[int, int, int] = (255, 255, 255)) \
-        -> tuple[Surface, Rect]:
+def make_simple_text_rgb(text: str, size: int = 64, color=(255, 255, 255),
+                         bg_color=(0, 0, 0, 255), wraplength=300) -> tuple[Surface, Rect]:
     font = pygame.font.Font(None, size)
-    text = font.render(text, True, color)
+    text = font.render(text, True, color, bg_color, wraplength)
     text_rect = text.get_rect()
     return text, text_rect
 
 
 # Simple text maker rgba
-def make_simple_text_rgba(text: str, size: int = 64, color: tuple[int, int, int, int] = (255, 255, 255, 255)) \
-        -> tuple[Surface, Rect]:
+def make_simple_text_rgba(text: str, size: int = 64, color=(255, 255, 255, 255), bg_color=(0, 0, 0, 0),
+                          wraplength=300) -> tuple[Surface, Rect]:
     font = pygame.font.Font(None, size)
-    text = font.render(text, True, color)
+    text = font.render(text, True, color, bg_color, wraplength)
     text_rect = text.get_rect()
     return text, text_rect
 
-#
-# Begin Sprite callables
-#
+
+# Gets a trend value along with associated text using a data list with specified index
+def get_data_trend(data: list[tuple], idx: int = 0, length: int = 7) -> tuple[str, float]:
+    if not data or len(data) < 2 or length <= 0:
+        return 0
+    f_data = data[-length:]
+    changes = []
+    for i in range(len(f_data) - 1):
+        f_data_idx = f_data[i][idx]
+        if f_data[i][idx] == 0:
+            changes.append(0)
+        else:
+            changes.append((f_data[i + 1][idx] - f_data_idx) / f_data_idx)
+    avg_change = round(sum(changes) / len(changes), 4)
+    if avg_change > 0:
+        trend_text = config.INCREASING
+    elif avg_change < 0:
+        trend_text = config.DECREASING
+    else:
+        trend_text = config.NEUTRAL
+    return trend_text, avg_change
 
 
-def call_on_hover_start_method(sprite: Sprite):
-    method_name = 'on_hover_start'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
+# Simple getter for text for a multiplier
+def get_multiplier_text(amount: float) -> str:
+    if amount > 1:
+        return config.HIGH
+    elif amount < 1:
+        return config.LOW
+    elif amount == 1:
+        return config.NEUTRAL
 
 
-def call_on_hover_end_method(sprite: Sprite):
-    method_name = 'on_hovered_end'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
+# Get graph points
+# Output can be directly used with pygame.draw.lines
+def get_graph_points(size: Sequence[int], data_list: list[float]) -> list[tuple[int, int]]:
+    draw_points = []
+    if len(data_list) > 0:
+        data_list = [0, *data_list]
+        width = size[0]
+        height = size[1]
+
+        data_max = max(data_list)
+        data_min = min(data_list)
+
+        def normalize(data):
+            return height - int((data - data_min) / (data_max - data_min) * height)
+
+        data_len = len(data_list)
+        if data_len > 1:
+            x_step = width // (data_len - 1)
+        else:
+            x_step = 0
+
+        for i in range(data_len - 1):
+            # Calculate x positions
+            x1 = i * x_step
+            x2 = (i + 1) * x_step
+
+            # Normalize y positions
+            y1 = normalize(data_list[i])
+            y2 = normalize(data_list[i + 1])
+
+            draw_points.append((x1, y1))
+            draw_points.append((x2, y2))
+    else:
+        draw_points.append((0, 0))
+        draw_points.append((0, 0))
+    return draw_points
 
 
-def call_on_click_start_method(sprite: Sprite):
-    method_name = 'on_click_start'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
-
-
-def call_on_click_end_method(sprite: Sprite):
-    method_name = 'on_click_end'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
-
-
-def call_cutscene_start_method(sprite: Sprite):
-    method_name = 'cutscene_start'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
-
-
-def call_cutscene_skip_method(sprite: Sprite):
-    method_name = 'cutscene_skip'
-    if hasattr(sprite, method_name) and callable(getattr(sprite, method_name)):
-        method = getattr(sprite, method_name)
-        method()
-
-
-def apply_damage(target_sprite: Sprite, causer_sprite: Sprite, damage_amount: float,
-                 affected_stat: str = "health", is_crit: bool = False, crit_multi: float = 1.0,
-                 *args, **kwargs) -> float:
-    method_name = 'on_damage'
-    damage_dealt: float = 0.0
-    if hasattr(target_sprite, method_name) and callable(getattr(target_sprite, method_name)):
-        method = getattr(target_sprite, method_name)
-        calc_kwargs = {"causer": causer_sprite,
-                       "is_crit": is_crit,
-                       "crit_multi": crit_multi,
-                       "affected_stat": affected_stat,
-                       "damage_amount": damage_amount * crit_multi if is_crit else damage_amount
-                       }
-        new_kwargs = {**calc_kwargs, **kwargs}
-        damage_dealt = method(*args, **new_kwargs)
-    return damage_dealt
+# Change level
+def change_level(new_level: type[Level]):
+    import shared
+    for name, value in vars(shared).items():
+        if value and isinstance(value, AbstractGroup):
+            value.empty()
+    shared.overlay.fill((0, 0, 0, 0))
+    shared.current_level = new_level()
+    shared.current_level.load_sprites()
 
 
 #

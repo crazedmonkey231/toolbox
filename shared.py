@@ -1,10 +1,18 @@
 from pygame import Surface, Clock
 from pygame.sprite import Group, GroupSingle, LayeredUpdates
 
+from toolbox.achievment_system import Achievements
+from toolbox.level import Level
+from toolbox.resistry import AssetRegistry
+from toolbox.shop import Shop
+from toolbox.stock_market import StockMarket
+
 # Shared systems
-asset_registry = None
-achievement_system = None
-loaded_experience = None
+asset_registry: AssetRegistry = None
+achievement_system: Achievements = None
+shop: Shop = None
+stock_market: StockMarket = None
+current_level: Level = None
 
 # Pygame stuff
 screen: Surface = None

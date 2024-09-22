@@ -1,8 +1,8 @@
-from toolbox.game_objects import Experience
+from toolbox.level import Level
 from toolbox.sprites.gameplayer import GamePlayer
 
 
-class SplashScreen(Experience):
+class SplashScreen(Level):
     def __init__(self):
         super().__init__()
 

@@ -1,9 +1,9 @@
 import pygame
 from pygame import Vector2
 import shared
-from toolbox.components.comp_gif_player import CompGifPlayer
-from toolbox.components.comp_movement import CompMovementCircle, CompMovementArch
-from toolbox.components.comp_trail import CompTrailRect
+from toolbox.sprites.components.comp_gif_player import CompGifPlayer
+from toolbox.sprites.components.comp_movement import CompMovementArch
+from toolbox.sprites.components.comp_trail import CompTrailRect
 from toolbox.game_objects import Projectile
 
 
