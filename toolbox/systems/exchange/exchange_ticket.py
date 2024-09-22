@@ -11,3 +11,4 @@ class ExchangeTicket(object):
         self.ticket_price = 0
         for item in items:
             self.ticket_price += item.item_value
+        self.ticket_price = round(self.ticket_price, 2)
