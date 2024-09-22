@@ -255,7 +255,7 @@ def make_simple_text_rgba(text: str, size: int = 64, color=(255, 255, 255, 255),
 # Gets a trend value along with associated text using a data list with specified index
 def get_data_trend(data: list[tuple], idx: int = 0, length: int = 7) -> tuple[str, float]:
     if not data or len(data) < 2 or length <= 0:
-        return 0
+        return config.NEUTRAL, 0
     f_data = data[-length:]
     changes = []
     for i in range(len(f_data) - 1):
