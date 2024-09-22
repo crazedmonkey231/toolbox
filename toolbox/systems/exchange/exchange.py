@@ -17,12 +17,17 @@ class Exchange(object):
             self.offers[ticket.ticket_id] = ticket
         return ticket
 
+    def get_ticket_price_info(self, ticket_uuid: UUID):
+        ticket = self.offers.get(ticket_uuid)
+        fee = round(ticket.ticket_price * self.exchange_fee, 2)
+        total_price = ticket.ticket_price + fee
+        return fee, total_price
+
     def buy_ticket(self, wallet: Wallet, ticket_uuid: UUID):
         success = False
         ticket = self.offers.get(ticket_uuid)
         if ticket is not None:
-            fee = round(ticket.ticket_price * self.exchange_fee, 2)
-            total_price = ticket.ticket_price + fee
+            total_price = self.get_ticket_price_info(ticket_uuid)[1]
             if wallet.cash >= total_price:
                 del self.offers[ticket_uuid]
                 wallet.cash -= total_price
