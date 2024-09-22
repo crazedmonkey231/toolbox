@@ -6,8 +6,9 @@ from toolbox.wallet import Wallet
 
 
 class Exchange(object):
-    def __init__(self):
+    def __init__(self, exchange_fee: float = 0.0):
         self.offers: defaultdict[UUID, ExchangeTicket] = defaultdict()
+        self.exchange_fee = round(exchange_fee, 2)
 
     def create_offer(self, wallet: Wallet, items: list[Item]):
         ticket = None
@@ -19,12 +20,14 @@ class Exchange(object):
     def buy_ticket(self, wallet: Wallet, ticket_uuid: UUID):
         success = False
         ticket = self.offers.get(ticket_uuid)
-        if ticket is not None and wallet.cash >= ticket.ticket_price:
-            del self.offers[ticket_uuid]
-            total_price = ticket.ticket_price
-            wallet.cash -= total_price
-            ticket.wallet.cash += total_price
-            for item in ticket.items:
-                wallet.owned_items.append(item)
-            success = True
+        if ticket is not None:
+            fee = round(ticket.ticket_price * self.exchange_fee, 2)
+            total_price = ticket.ticket_price + fee
+            if wallet.cash >= total_price:
+                del self.offers[ticket_uuid]
+                wallet.cash -= total_price
+                ticket.wallet.cash += total_price
+                for item in ticket.items:
+                    wallet.owned_items.append(item)
+                success = True
         return success
