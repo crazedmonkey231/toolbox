@@ -76,4 +76,9 @@ while shared.running:
     # Delta time
     shared.delta_time = shared.clock.tick(FPS) / shared.delta_slowdown
 
+    # Realtime variables
+    shared.time_running_sec += shared.delta_time
+    shared.time_running_min = shared.time_running_sec / 60
+    shared.time_running_hour = shared.time_running_min / 60
+
 pygame.quit()

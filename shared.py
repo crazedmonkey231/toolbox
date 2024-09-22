@@ -18,6 +18,9 @@ clock: Clock = None
 running: bool = True
 delta_time: float = 0
 delta_slowdown: float = 1000
+time_running_sec = 0
+time_running_min = 0
+time_running_hour = 0
 
 # Main renderer
 renderer_group: LayeredUpdates = LayeredUpdates()
