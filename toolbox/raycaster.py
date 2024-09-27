@@ -235,10 +235,13 @@ class Raycaster(Group):
                 for stripe in range(int(draw_start_x), int(draw_end_x)):
                     sprite_tex_x = int(256 * (stripe - (sprite_screen_x - sprite_width / 2)) * sprite.image.get_width() / sprite_width) / 256
                     if transform_y < self.z_buffer[stripe]:
+                        # Resolution based blit
                         # for y in range(draw_start_y, draw_end_y, self.resolution):
                         #     d = (y - v_move_screen) * 256 - SCREEN_HEIGHT * 128 + sprite_height * 128
                         #     sprite_tex_y = ((d * TEXTURE_SIZE) / sprite_height) / 256
                         #     screen.blit(sprite.image, (stripe, y), (sprite_tex_x, sprite_tex_y, self.resolution, self.resolution))
+
+                        # Scaling based blit
                         sprite_texture_slice = sprite.image.subsurface((sprite_tex_x, 0, 1, TEXTURE_SIZE))
                         sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, (self.resolution, min(draw_end_y - draw_start_y, 15000)))
                         screen.blit(sprite_scaled_slice, (stripe, draw_start_y))
