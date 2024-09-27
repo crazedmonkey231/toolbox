@@ -26,13 +26,6 @@ SCREEN_HEIGHT_HALF: int = SCREEN_SIZE[1] // 2
 SCREEN_SIZE_V2: Vector2 = Vector2(SCREEN_SIZE)
 SCREEN_SIZE_HALF_V2: Vector2 = Vector2(SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF)
 
-# Canvas
-CANVAS_SIZE: tuple[int, int] = (10000, 10000)
-CANVAS_WIDTH: int = CANVAS_SIZE[0]
-CANVAS_WIDTH_HALF: int = CANVAS_SIZE[0] // 2
-CANVAS_HEIGHT: int = CANVAS_SIZE[1]
-CANVAS_HEIGHT_HALF: int = CANVAS_SIZE[1] // 2
-
 # Camera
 MIN_ZOOM: float = 0.1
 MAX_ZOOM: float = 5
@@ -40,8 +33,8 @@ ZOOM_STEP: float = 0.1
 
 # Pathfinding
 GRID_WIDTH: int = 32
-GRID_SIZE: int = CANVAS_WIDTH // GRID_WIDTH
-CELL_SIZE: int = CANVAS_WIDTH // GRID_SIZE
+GRID_SIZE: int = SCREEN_WIDTH // GRID_WIDTH
+CELL_SIZE: int = SCREEN_WIDTH // GRID_SIZE
 DIRECTIONS: list[tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
 
 # Stock market

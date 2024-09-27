@@ -10,6 +10,15 @@ from toolbox.util import log
 grid = [[0] * GRID_SIZE for _ in range(GRID_SIZE)]  # 0 = walkable, 1 = blocked
 
 
+def create_bounds():
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            # Set the boundary cells to 1
+            if i == 0 or i == GRID_SIZE - 1 or j == 0 or j == GRID_SIZE - 1:
+                grid[i][j] = 1
+    return grid
+
+
 # Define the Cell class
 class Cell:
     def __init__(self):

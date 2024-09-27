@@ -21,8 +21,10 @@ class GameObject(Sprite):
         self.image.fill((255, 0, 255))
         self.rect = self.image.get_rect()
         self.rect.center = kwargs["center"] if "center" in kwargs else Vector2(0, 0)
+        self.center_position = Vector2(self.rect.center)
 
     def update(self, *args, **kwargs):
+        self.rect.center = self.center_position
         if self.components:
             for comp in [c for c in self.components if c.needs_update]:
                 comp.comp_update(*args, **kwargs)

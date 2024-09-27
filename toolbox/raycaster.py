@@ -1,21 +1,12 @@
 import os
 import pygame
 from pygame.sprite import Group, Sprite
+import shared
 from config import IMAGE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH, TEXTURE_SIZE, COS, SIN, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF
 from math import cos, sin
 from toolbox.util import get_sprite_distance
 
-# A map over the world
-worldMap = [
-    [1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 1, 0, 1],
-    [1, 0, 0, 0, 1, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1]]
-
-
 # Creates window
-
 wall_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_wall.png"))
 floor_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_floor.png"))
 ceiling_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_ceiling.png"))
@@ -24,6 +15,7 @@ ceiling_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_ceiling.png"))
 class Raycaster(Group):
     def __init__(self):
         super().__init__()
+
         self.owner: Sprite = None
 
         self.position_x = 0
@@ -48,32 +40,32 @@ class Raycaster(Group):
         itgm = (cos(-rotation_speed), sin(-rotation_speed))
 
         if forward:
-            if not worldMap[int(self.position_x + self.direction_x * move_speed)][int(self.position_y)]:
+            if not shared.current_level.level_grid[int(self.position_x + self.direction_x * move_speed)][int(self.position_y)]:
                 self.position_x += self.direction_x * move_speed
-            if not worldMap[int(self.position_x)][int(self.position_y + self.direction_y * move_speed)]:
+            if not shared.current_level.level_grid[int(self.position_x)][int(self.position_y + self.direction_y * move_speed)]:
                 self.position_y += self.direction_y * move_speed
         if backward:
-            if not worldMap[int(self.position_x - self.direction_x * move_speed)][int(self.position_y)]:
+            if not shared.current_level.level_grid[int(self.position_x - self.direction_x * move_speed)][int(self.position_y)]:
                 self.position_x -= self.direction_x * move_speed
-            if not worldMap[int(self.position_x)][int(self.position_y - self.direction_y * move_speed)]:
+            if not shared.current_level.level_grid[int(self.position_x)][int(self.position_y - self.direction_y * move_speed)]:
                 self.position_y -= self.direction_y * move_speed
         if strafe_right:
             x_pos = int(self.position_x)
             y_pos = int(self.position_y)
             new_x_pos = int(self.position_x - self.direction_y * move_speed)
             new_y_pos = int(self.position_y + self.direction_x * move_speed)
-            if not worldMap[new_x_pos][y_pos]:
+            if not shared.current_level.level_grid[new_x_pos][y_pos]:
                 self.position_x -= self.direction_y * move_speed
-            if not worldMap[x_pos][new_y_pos]:
+            if not shared.current_level.level_grid[x_pos][new_y_pos]:
                 self.position_y += self.direction_x * move_speed
         if strafe_left:
             x_pos = int(self.position_x)
             y_pos = int(self.position_y)
             new_x_pos = int(self.position_x + self.direction_y * move_speed)
             new_y_pos = int(self.position_y - self.direction_x * move_speed)
-            if not worldMap[new_x_pos][y_pos]:
+            if not shared.current_level.level_grid[new_x_pos][y_pos]:
                 self.position_x += self.direction_y * move_speed
-            if not worldMap[x_pos][new_y_pos]:
+            if not shared.current_level.level_grid[x_pos][new_y_pos]:
                 self.position_y -= self.direction_x * move_speed
         if left:
             old_direction_x = self.direction_x
@@ -134,7 +126,7 @@ class Raycaster(Group):
                     map_y += step_y
                     side = 1
 
-                if worldMap[map_x][map_y] > 0:
+                if shared.current_level.level_grid[map_x][map_y] > 0:
                     hit = 1
 
             # Correction against fish eye effect
@@ -191,8 +183,7 @@ class Raycaster(Group):
         )
 
         for sprite in filtered_sorted_sprites:
-            sprite: Sprite = sprite
-            center = sprite.rect.center
+            center = sprite.center_position
             sprite_x = center[0] - self.position_x
             sprite_y = center[1] - self.position_y
 
@@ -242,6 +233,7 @@ class Raycaster(Group):
                         #     screen.blit(sprite.image, (stripe, y), (sprite_tex_x, sprite_tex_y, self.resolution, self.resolution))
 
                         # Scaling based blit
-                        sprite_texture_slice = sprite.image.subsurface((sprite_tex_x, 0, 1, TEXTURE_SIZE))
-                        sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, (self.resolution, min(draw_end_y - draw_start_y, 15000)))
-                        screen.blit(sprite_scaled_slice, (stripe, draw_start_y))
+                        if sprite_tex_x >= 1:
+                            sprite_texture_slice = sprite.image.subsurface((sprite_tex_x, 0, 1, TEXTURE_SIZE))
+                            sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, (self.resolution, min(draw_end_y - draw_start_y, 15000)))
+                            screen.blit(sprite_scaled_slice, (stripe, draw_start_y))
