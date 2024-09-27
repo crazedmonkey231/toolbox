@@ -36,7 +36,7 @@ class Raycaster(Group):
         self.plane_y = 0.66
         
         self.resolution = 4
-        self.bounds = .05
+        self.bounds = .2
 
         self.z_buffer: list[float] = [0] * SCREEN_WIDTH
 
@@ -186,7 +186,7 @@ class Raycaster(Group):
 
         camera_pos = (self.position_x, self.position_y)
         filtered_sorted_sprites = sorted(
-            [sprite for sprite in self.sprites() if sprite != self.owner and get_sprite_distance(camera_pos, sprite) > 0.2],
+            [sprite for sprite in self.sprites() if sprite != self.owner and get_sprite_distance(camera_pos, sprite) > self.bounds],
             key=lambda x: get_sprite_distance(camera_pos, x)
         )
 
