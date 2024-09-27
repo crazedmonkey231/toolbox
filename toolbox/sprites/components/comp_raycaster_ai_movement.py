@@ -22,12 +22,13 @@ class CompRaycasterAiMovement(GameObjectComponent):
                 self.move_direction = (target_location - self.position).normalize()
                 delta_move = self.move_direction * self.move_speed * shared.delta_time
                 self.position += delta_move
-                self.parent.center_position = self.position
             else:
                 self.path = toolbox.pathfinding.a_star((int(self.position.x), int(self.position.x)),
                                                        (int(target_location.x), int(target_location.y)))
                 if self.path:
-                    self.move_direction = (self.path[-1] - self.position).normalize()
+                    dest = self.path[-1]
+                    delta_dist = dest - self.position
+                    self.move_direction = delta_dist.normalize()
                     delta_move = self.move_direction * self.move_speed * shared.delta_time
                     self.position += delta_move
-                    self.parent.center_position = self.position
+            self.parent.center_position = self.position

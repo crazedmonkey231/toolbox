@@ -28,7 +28,7 @@ class Raycaster(Group):
         self.plane_y = 0.66
         
         self.resolution = 4
-        self.bounds = .2
+        self.bounds = .1
 
         self.z_buffer: list[float] = [0] * SCREEN_WIDTH
 
