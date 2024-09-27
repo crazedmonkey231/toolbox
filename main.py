@@ -6,15 +6,13 @@ import PIL
 
 # Normal imports.
 import pygame
-
+import shared
 from config import SCREEN_SIZE, FPS, DEBUG, RGB_BLACK
-import toolbox
 from toolbox.systems.achievement.achievments import Achievements
 from toolbox.levels.splash_screen import SplashScreen
-import shared
 from shared import renderer_group
 from toolbox.resistry import AssetRegistry
-from toolbox.systems.exchange.exchange import Exchange
+import toolbox.util
 
 # Quick print so imports aren't lost on refactor
 if DEBUG:
@@ -45,7 +43,7 @@ shared.clock = pygame.time.Clock()
 #
 # Load Registry
 #
-images = ['fsh.png', 'bullet.png']
+images = ['fsh.png', 'bullet.png', 'test_wall.png', 'npc.png']
 sounds = ['hello.wav']
 gifs = ['fire.gif']
 
@@ -56,12 +54,19 @@ shared.asset_registry.load_registry(images, sounds, gifs)
 # Load splash screen
 toolbox.util.change_level(SplashScreen)
 
+# shared.mouse_grabbed = True
+toolbox.util.mouse_grab(shared.mouse_grabbed)
+
 # Main loop
 while shared.running:
     # poll for events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             shared.running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_TAB:
+                shared.mouse_grabbed = not shared.mouse_grabbed
+                toolbox.util.mouse_grab(shared.mouse_grabbed)
 
     # Draw sprites to canvas
     shared.screen.fill(RGB_BLACK)

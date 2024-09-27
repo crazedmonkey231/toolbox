@@ -352,6 +352,26 @@ def get_graph_points(size: Sequence[int], data_list: list[float]) -> list[tuple[
     return draw_points
 
 
+# Get Sprite distance from pos
+def get_sprite_distance(from_pos: Sequence[float], to_sprite: Sprite):
+    center = to_sprite.rect.center
+    distance = (from_pos[0] - center[0]) ** 2 + (from_pos[1] - center[1]) ** 2
+    return distance
+
+
+# Get Sprite distance from pos sqrt
+def get_sprite_distance_sqrt(from_pos: Sequence[float], to_sprite: Sprite):
+    center = to_sprite.rect.center
+    distance = math.sqrt(from_pos[0] - center[0]) ** 2 + (from_pos[1] - center[1]) ** 2
+    return distance
+
+
+# Grab screen
+def mouse_grab(mouse_grabbed):
+    pygame.event.set_grab(mouse_grabbed)
+    pygame.mouse.set_visible(not mouse_grabbed)
+
+
 # Change level
 def change_level(new_level: type[Level]):
     import shared

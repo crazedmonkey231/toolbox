@@ -1,5 +1,6 @@
 from toolbox.level import Level
 from toolbox.sprites.gameplayer import GamePlayer
+from toolbox.sprites.npc import NPC
 
 
 class SplashScreen(Level):
@@ -8,4 +9,5 @@ class SplashScreen(Level):
 
     def load_sprites(self):
         # Todo add sprites
-        GamePlayer((200, 200))
+        GamePlayer((2.5, 2.5))
+        NPC((3.5, 3.5))

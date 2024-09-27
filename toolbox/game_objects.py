@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from pygame import Mask, Vector2
 from pygame.sprite import Sprite
+
+from config import TEXTURE_SIZE
 from shared import *
 
 
@@ -15,7 +17,7 @@ class GameObject(Sprite):
         self.rotation = 0
         self.components: list[GameObjectComponent] = list()
         super().__init__(groups)
-        self.image = Surface((48, 48)).convert()
+        self.image = Surface((TEXTURE_SIZE, TEXTURE_SIZE)).convert()
         self.image.fill((255, 0, 255))
         self.rect = self.image.get_rect()
         self.rect.center = kwargs["center"] if "center" in kwargs else Vector2(0, 0)
@@ -103,7 +105,6 @@ class Pickup(GameObject):
 class Player(GameObject):
     def __init__(self, *args, **kwargs):
         super().__init__(1, [renderer_group, player_ref_group], *args, **kwargs)
-        # self.mask: Mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
@@ -113,7 +114,15 @@ class Player(GameObject):
 class Enemy(GameObject):
     def __init__(self, *args, **kwargs):
         super().__init__(1, [renderer_group, enemy_group], *args, **kwargs)
-        # self.mask: Mask = pygame.mask.from_surface(self.image)
+
+    def update(self, *args, **kwargs):
+        super().update(*args, **kwargs)
+
+
+# Todo Wall
+class Wall(GameObject):
+    def __init__(self, *args, **kwargs):
+        super().__init__(2, [renderer_group], *args, **kwargs)
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)
@@ -123,7 +132,6 @@ class Enemy(GameObject):
 class Projectile(GameObject):
     def __init__(self, *args, **kwargs):
         super().__init__(2, [renderer_group, projectile_group], *args, **kwargs)
-        # self.mask: Mask = pygame.mask.from_surface(self.image)
 
     def update(self, *args, **kwargs):
         super().update(*args, **kwargs)

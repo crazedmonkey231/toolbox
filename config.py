@@ -51,6 +51,10 @@ NEUTRAL: str = "Neutral"
 DECREASING: str = "Decreasing"
 INCREASING: str = "Increasing"
 
+# Raycasting
+COS, SIN = (0, 1)
+TEXTURE_SIZE = 64
+
 # Colors RGB
 RGB_WHITE: tuple[int, int, int] = (255, 255, 255)
 RGB_BLACK: tuple[int, int, int] = (0, 0, 0)

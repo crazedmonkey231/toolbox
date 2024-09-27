@@ -1,254 +1,244 @@
-"""
-The MIT License (MIT)
-
-Copyright (c) 2013 Oscar Utbult
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-"""
-
-# Todo
-
-try:
-    import math
-    import time
-    import pygame
-    from pygame.locals import *
-
-except ImportError:
-    print("PyRay could not import necessary modules")
-    raise ImportError
-
+import os
+import pygame
+from pygame.sprite import Group, Sprite
+from config import IMAGE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH, TEXTURE_SIZE, COS, SIN, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF
+from math import cos, sin
+from toolbox.util import get_sprite_distance
 
 # A map over the world
 worldMap = [
-    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-    [2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 2, 3, 2, 3, 0, 0, 2],
-    [2, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-    [2, 3, 1, 0, 0, 2, 0, 0, 0, 2, 3, 2, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 2, 0, 0, 0, 2],
-    [2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 2, 1, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 1, 0, 0, 0, 0, 0, 0, 0, 2],
-    [2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-    [2, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 3, 2, 1, 2, 0, 1],
-    [1, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 2],
-    [2, 3, 1, 0, 0, 2, 0, 0, 2, 1, 3, 2, 0, 2, 0, 0, 3, 0, 3, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1, 0, 0, 2, 0, 0, 2],
-    [2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 3, 0, 1, 2, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 3, 0, 2],
-    [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 1],
-    [2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1]]
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 1, 0, 1],
+    [1, 0, 0, 0, 1, 0, 1],
+    [1, 1, 1, 1, 1, 1, 1]]
 
-
-# Closes the program
-def close():
-    pygame.display.quit()
-    pygame.quit()
-
-
-pygame.init()
-running = True
-clock = pygame.Clock()
-
-# Head Up Display information (HUD)
-font = pygame.font.SysFont("Verdana", 20)
-HUD = font.render("F1 / F2 - Screenshot JPEG/BMP   F5/F6 - Shadows on/off   F7/F8 - HUD Show/Hide", True, (0, 0, 0))
 
 # Creates window
-WIDTH = 1000
-HEIGHT = 800
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("PyRay - Python Raycasting Engine (v0.03)")
 
-showShadow = True
-showHUD = True
-
-# Defines starting position and direction
-positionX = 3.0
-positionY = 7.0
-
-directionX = 1.0
-directionY = 0.0
-
-planeX = 0.0
-planeY = 0.5
-
-# Movement constants
-ROTATIONSPEED = 0.02
-MOVESPEED = 0.03
-
-# Trigeometric tuples + variables for index
-TGM = (math.cos(ROTATIONSPEED), math.sin(ROTATIONSPEED))
-ITGM = (math.cos(-ROTATIONSPEED), math.sin(-ROTATIONSPEED))
-COS, SIN = (0, 1)
+wall_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_wall.png"))
+floor_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_floor.png"))
+ceiling_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_ceiling.png"))
 
 
-while running:
-    # Catches user input
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+class Raycaster(Group):
+    def __init__(self):
+        super().__init__()
+        self.owner: Sprite = None
 
-    # Checks with keys are pressed by the user
-    # Uses if so that more than one button at a time can be pressed.
-    keys = pygame.key.get_pressed()
+        self.position_x = 0
+        self.position_y = 0
+        
+        self.direction_x = 1.0
+        self.direction_y = 0.0
+        
+        self.plane_x = 0.0
+        self.plane_y = 0.66
+        
+        self.resolution = 4
+        self.bounds = .05
 
-    if keys[K_ESCAPE]:
-        close()
+        self.z_buffer: list[float] = [0] * SCREEN_WIDTH
 
-    if keys[K_LEFT]:
-        oldDirectionX = directionX
-        directionX = directionX * ITGM[COS] - directionY * ITGM[SIN]
-        directionY = oldDirectionX * ITGM[SIN] + directionY * ITGM[COS]
-        oldPlaneX = planeX
-        planeX = planeX * ITGM[COS] - planeY * ITGM[SIN]
-        planeY = oldPlaneX * ITGM[SIN] + planeY * ITGM[COS]
+    # moves camera returns transform
+    def move(self, move_speed, rotation_speed, forward=False, backward=False, left=False, right=False,
+             strafe_left=False, strafe_right=False):
 
-    if keys[K_RIGHT]:
-        oldDirectionX = directionX
-        directionX = directionX * TGM[COS] - directionY * TGM[SIN]
-        directionY = oldDirectionX * TGM[SIN] + directionY * TGM[COS]
-        oldPlaneX = planeX
-        planeX = planeX * TGM[COS] - planeY * TGM[SIN]
-        planeY = oldPlaneX * TGM[SIN] + planeY * TGM[COS]
+        tgm = (cos(rotation_speed), sin(rotation_speed))
+        itgm = (cos(-rotation_speed), sin(-rotation_speed))
 
-    if keys[K_UP]:
-        if not worldMap[int(positionX + directionX * MOVESPEED)][int(positionY)]:
-            positionX += directionX * MOVESPEED
-        if not worldMap[int(positionX)][int(positionY + directionY * MOVESPEED)]:
-            positionY += directionY * MOVESPEED
+        if forward:
+            if not worldMap[int(self.position_x + self.direction_x * move_speed)][int(self.position_y)]:
+                self.position_x += self.direction_x * move_speed
+            if not worldMap[int(self.position_x)][int(self.position_y + self.direction_y * move_speed)]:
+                self.position_y += self.direction_y * move_speed
+        if backward:
+            if not worldMap[int(self.position_x - self.direction_x * move_speed)][int(self.position_y)]:
+                self.position_x -= self.direction_x * move_speed
+            if not worldMap[int(self.position_x)][int(self.position_y - self.direction_y * move_speed)]:
+                self.position_y -= self.direction_y * move_speed
+        if strafe_right:
+            x_pos = int(self.position_x)
+            y_pos = int(self.position_y)
+            new_x_pos = int(self.position_x - self.direction_y * move_speed)
+            new_y_pos = int(self.position_y + self.direction_x * move_speed)
+            if not worldMap[new_x_pos][y_pos]:
+                self.position_x -= self.direction_y * move_speed
+            if not worldMap[x_pos][new_y_pos]:
+                self.position_y += self.direction_x * move_speed
+        if strafe_left:
+            x_pos = int(self.position_x)
+            y_pos = int(self.position_y)
+            new_x_pos = int(self.position_x + self.direction_y * move_speed)
+            new_y_pos = int(self.position_y - self.direction_x * move_speed)
+            if not worldMap[new_x_pos][y_pos]:
+                self.position_x += self.direction_y * move_speed
+            if not worldMap[x_pos][new_y_pos]:
+                self.position_y -= self.direction_x * move_speed
+        if left:
+            old_direction_x = self.direction_x
+            self.direction_x = self.direction_x * itgm[COS] - self.direction_y * itgm[SIN]
+            self.direction_y = old_direction_x * itgm[SIN] + self.direction_y * itgm[COS]
+            old_plane_x = self.plane_x
+            self.plane_x = self.plane_x * itgm[COS] - self.plane_y * itgm[SIN]
+            self.plane_y = old_plane_x * itgm[SIN] + self.plane_y * itgm[COS]
+        if right:
+            old_direction_x = self.direction_x
+            self.direction_x = self.direction_x * tgm[COS] - self.direction_y * tgm[SIN]
+            self.direction_y = old_direction_x * tgm[SIN] + self.direction_y * tgm[COS]
+            old_plane_x = self.plane_x
+            self.plane_x = self.plane_x * tgm[COS] - self.plane_y * tgm[SIN]
+            self.plane_y = old_plane_x * tgm[SIN] + self.plane_y * tgm[COS]
+        return self.position_x, self.position_y, self.direction_x, self.direction_y
 
-    if keys[K_DOWN]:
-        if not worldMap[int(positionX - directionX * MOVESPEED)][int(positionY)]:
-            positionX -= directionX * MOVESPEED
-        if not worldMap[int(positionX)][int(positionY - directionY * MOVESPEED)]:
-            positionY -= directionY * MOVESPEED
+    def draw(self, screen):
+        for column in range(0, SCREEN_WIDTH, self.resolution):
+            camera_x = 2.0 * column / SCREEN_WIDTH - 1.0
 
-    # showShadows - On / Off
-    if keys[K_F5]:
-        showShadow = True
-    if keys[K_F6]:
-        showShadow = False
+            ray_dir_x = self.direction_x + self.plane_x * camera_x
+            ray_dir_y = self.direction_y + self.plane_y * camera_x + 1e-30
 
-    # showHUD - Show / Hide
-    if keys[K_F7]:
-        showHUD = True
-    if keys[K_F8]:
-        showHUD = False
+            # In what square is the ray?
+            map_x = int(self.position_x)
+            map_y = int(self.position_y)
 
-    # Draws roof and floor
-    screen.fill((25, 25, 25))
-    pygame.draw.rect(screen, (50, 50, 50), (0, HEIGHT / 2, WIDTH, HEIGHT / 2))
+            # Delta distance calculation
+            delta_distance_x = 1e-30 if ray_dir_x == 0 else abs(1 / ray_dir_x)
+            delta_distance_y = 1e-30 if ray_dir_y == 0 else abs(1 / ray_dir_y)
 
-    # Starts drawing level from 0 to < WIDTH
-    for column in range(0, WIDTH, 2):
-        cameraX = 2.0 * column / WIDTH - 1.0
-        rayPositionX = positionX
-        rayPositionY = positionY
-        rayDirectionX = directionX + planeX * cameraX
-        rayDirectionY = directionY + planeY * cameraX + .000000000000001  # avoiding ZDE
-
-        # In what square is the ray?
-        mapX = int(rayPositionX)
-        mapY = int(rayPositionY)
-
-        # Delta distance calculation
-        # Delta = square ( raydir * raydir) / (raydir * raydir)
-        deltaDistanceX = math.sqrt(1.0 + (rayDirectionY * rayDirectionY) / (rayDirectionX * rayDirectionX))
-        deltaDistanceY = math.sqrt(1.0 + (rayDirectionX * rayDirectionX) / (rayDirectionY * rayDirectionY))
-
-        # We need sideDistanceX and Y for distance calculation. Checks quadrant
-        if rayDirectionX < 0:
-            stepX = -1
-            sideDistanceX = (rayPositionX - mapX) * deltaDistanceX
-
-        else:
-            stepX = 1
-            sideDistanceX = (mapX + 1.0 - rayPositionX) * deltaDistanceX
-
-        if rayDirectionY < 0:
-            stepY = -1
-            sideDistanceY = (rayPositionY - mapY) * deltaDistanceY
-
-        else:
-            stepY = 1
-            sideDistanceY = (mapY + 1.0 - rayPositionY) * deltaDistanceY
-
-        # Finding distance to a wall
-        hit = 0
-        side = 0
-        while hit == 0:
-            if sideDistanceX < sideDistanceY:
-                sideDistanceX += deltaDistanceX
-                mapX += stepX
-                side = 0
-
+            # We need sideDistanceX and Y for distance calculation. Checks quadrant
+            if ray_dir_x < 0:
+                step_x = -1
+                side_distance_x = (self.position_x - map_x) * delta_distance_x
             else:
-                sideDistanceY += deltaDistanceY
-                mapY += stepY
-                side = 1
+                step_x = 1
+                side_distance_x = (map_x + 1.0 - self.position_x) * delta_distance_x
 
-            if worldMap[mapX][mapY] > 0:
-                hit = 1
+            if ray_dir_y < 0:
+                step_y = -1
+                side_distance_y = (self.position_y - map_y) * delta_distance_y
+            else:
+                step_y = 1
+                side_distance_y = (map_y + 1.0 - self.position_y) * delta_distance_y
 
-        # Correction against fish eye effect
-        if side == 0:
-            perpWallDistance = abs((mapX - rayPositionX + (1.0 - stepX) / 2.0) / rayDirectionX)
-        else:
-            perpWallDistance = abs((mapY - rayPositionY + (1.0 - stepY) / 2.0) / rayDirectionY)
+            # Finding distance to a wall
+            hit = 0
+            side = 0
+            while hit == 0:
+                if side_distance_x < side_distance_y:
+                    side_distance_x += delta_distance_x
+                    map_x += step_x
+                    side = 0
+                else:
+                    side_distance_y += delta_distance_y
+                    map_y += step_y
+                    side = 1
 
-        # Calculating HEIGHT of the line to draw
-        lineHEIGHT = abs(int(HEIGHT / (perpWallDistance + .0000001)))
-        drawStart = -lineHEIGHT / 2.0 + HEIGHT / 2.0
+                if worldMap[map_x][map_y] > 0:
+                    hit = 1
 
-        # if drawStat < 0 it would draw outside the screen
-        if drawStart < 0:
-            drawStart = 0
+            # Correction against fish eye effect
+            if side == 0:
+                perp_wall_dist = side_distance_x - delta_distance_x
+            else:
+                perp_wall_dist = side_distance_y - delta_distance_y
+            perp_wall_dist = max(perp_wall_dist, self.bounds)
 
-        drawEnd = lineHEIGHT / 2.0 + HEIGHT / 2.0
+            self.z_buffer[column] = perp_wall_dist
 
-        if drawEnd >= HEIGHT:
-            drawEnd = HEIGHT - 1
+            line_height = int(SCREEN_HEIGHT / perp_wall_dist)
+            draw_start = int((-line_height + SCREEN_HEIGHT) / 2)
+            draw_end = int((line_height + SCREEN_HEIGHT) / 2)
 
-        # Wall colors 0 to 3
-        wallcolors = [[], [150, 0, 0], [0, 150, 0], [0, 0, 150]]
-        color = wallcolors[worldMap[mapX][mapY]]
+            if not side:
+                wall_x = self.position_y + perp_wall_dist * ray_dir_y
+            else:
+                wall_x = self.position_x + perp_wall_dist * ray_dir_x
 
-        # If side == 1 then ton the color down. Gives a "showShadow" an the wall.
-        # Draws showShadow if showShadow is True
-        if showShadow:
-            if side == 1:
-                for i, v in enumerate(color):
-                    color[i] = int(v / 1.2)
+            tex_x = int(TEXTURE_SIZE * wall_x) % TEXTURE_SIZE
 
-        # Drawing the graphics
-        pygame.draw.line(screen, color, (column, drawStart), (column, drawEnd), 2)
+            wall_texture_slice = wall_texture.subsurface((tex_x, 0, 1, TEXTURE_SIZE))
+            wall_scaled_slice = pygame.transform.scale(wall_texture_slice, (self.resolution, draw_end - draw_start))
+            screen.blit(wall_scaled_slice, (column, draw_start))
 
-    # Drawing HUD if showHUD is True
-    if showHUD:
-        pygame.draw.rect(screen, (100, 100, 200), (0, HEIGHT - 40, WIDTH, 40))
-        screen.blit(HUD, (20, HEIGHT - 30))
+            while draw_end < SCREEN_HEIGHT:
+                p = draw_end - SCREEN_HEIGHT_HALF
+                pos_z = 0.5 * SCREEN_HEIGHT
+                row_distance = pos_z / p
 
-    # Updating display
-    pygame.display.flip()
+                floor_x = self.position_x + row_distance * ray_dir_x
+                floor_y = self.position_y + row_distance * ray_dir_y
 
-    clock.tick(30)
+                cell_x = int(floor_x)
+                cell_y = int(floor_y)
+
+                tx = (TEXTURE_SIZE * (floor_x - cell_x)) % TEXTURE_SIZE
+                ty = (TEXTURE_SIZE * (floor_y - cell_y)) % TEXTURE_SIZE
+
+                # pygame.draw.rect(screen, "gray", (column, draw_start, self.resolution, self.resolution))
+                screen.blit(ceiling_texture, (column, draw_start), (tx, ty, self.resolution, self.resolution))
+
+                # pygame.draw.rect(screen, "purple", (column, draw_end, self.resolution, self.resolution))
+                screen.blit(floor_texture, (column, draw_end), (tx, ty, self.resolution, self.resolution))
+
+                draw_start -= self.resolution
+                draw_end += self.resolution
+
+        camera_pos = (self.position_x, self.position_y)
+        filtered_sorted_sprites = sorted(
+            [sprite for sprite in self.sprites() if sprite != self.owner and get_sprite_distance(camera_pos, sprite) > 0.2],
+            key=lambda x: get_sprite_distance(camera_pos, x)
+        )
+
+        for sprite in filtered_sorted_sprites:
+            sprite: Sprite = sprite
+            center = sprite.rect.center
+            sprite_x = center[0] - self.position_x
+            sprite_y = center[1] - self.position_y
+
+            inv_det = 1.0 / (self.plane_x * self.direction_y - self.direction_x * self.plane_y)
+
+            transform_x = inv_det * (self.direction_y * sprite_x - self.direction_x * sprite_y)
+            transform_y = inv_det * (-self.plane_y * sprite_x + self.plane_x * sprite_y)
+
+            if transform_y > 0:
+                sprite_screen_x = int(SCREEN_WIDTH_HALF * (1 + transform_x / transform_y))
+
+                u_div = 1
+                v_div = 1
+                v_move = 0.0
+                v_move_screen = int(v_move / transform_y)
+
+                sprite_width = abs(int(SCREEN_HEIGHT / transform_y)) / u_div
+                sprite_height = abs(int(SCREEN_HEIGHT / transform_y)) / v_div
+
+                draw_start_x = -sprite_width / 2 + sprite_screen_x
+                if draw_start_x < 0:
+                    draw_start_x = 0
+
+                draw_end_x = sprite_width / 2 + sprite_screen_x
+                if draw_end_x >= SCREEN_WIDTH:
+                    draw_end_x = SCREEN_WIDTH - 1
+
+                draw_start_y = int(-sprite_height / 2 + SCREEN_HEIGHT_HALF + v_move_screen)
+                # if draw_start_y < 0:
+                #     draw_start_y = 0
+
+                draw_end_y = int(sprite_height / 2 + SCREEN_HEIGHT_HALF + v_move_screen)
+                # if draw_end_y > SCREEN_HEIGHT:
+                #     draw_end_y = SCREEN_HEIGHT + 1
+
+                if 0 < draw_start_x < SCREEN_WIDTH:
+                    draw_start_x = max(0, draw_start_x)
+                    draw_end_x = min(SCREEN_WIDTH, draw_end_x)
+
+                for stripe in range(int(draw_start_x), int(draw_end_x)):
+                    sprite_tex_x = int(256 * (stripe - (sprite_screen_x - sprite_width / 2)) * sprite.image.get_width() / sprite_width) / 256
+                    if transform_y < self.z_buffer[stripe]:
+                        # for y in range(draw_start_y, draw_end_y, self.resolution):
+                        #     d = (y - v_move_screen) * 256 - SCREEN_HEIGHT * 128 + sprite_height * 128
+                        #     sprite_tex_y = ((d * TEXTURE_SIZE) / sprite_height) / 256
+                        #     screen.blit(sprite.image, (stripe, y), (sprite_tex_x, sprite_tex_y, self.resolution, self.resolution))
+                        sprite_texture_slice = sprite.image.subsurface((sprite_tex_x, 0, 1, TEXTURE_SIZE))
+                        sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, (self.resolution, min(draw_end_y - draw_start_y, 15000)))
+                        screen.blit(sprite_scaled_slice, (stripe, draw_start_y))
