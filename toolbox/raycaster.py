@@ -1,15 +1,11 @@
 import os
 import pygame
+from pygame import Surface, Vector2
 from pygame.sprite import Group, Sprite
 import shared
-from config import IMAGE_DIR, SCREEN_HEIGHT, SCREEN_WIDTH, TEXTURE_SIZE, COS, SIN, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF
+from config import SCREEN_HEIGHT, SCREEN_WIDTH, TEXTURE_SIZE, COS, SIN, SCREEN_WIDTH_HALF, SCREEN_HEIGHT_HALF
 from math import cos, sin
-from toolbox.util import get_sprite_distance
-
-# Creates window
-wall_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_wall.png"))
-floor_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_floor.png"))
-ceiling_texture = pygame.image.load(os.path.join(IMAGE_DIR, "test_ceiling.png"))
+from toolbox.util import log
 
 
 class Raycaster(Group):
@@ -20,17 +16,26 @@ class Raycaster(Group):
 
         self.position_x = 0
         self.position_y = 0
-        
+
         self.direction_x = 1.0
         self.direction_y = 0.0
-        
+
         self.plane_x = 0.0
         self.plane_y = 0.66
-        
+
         self.resolution = 4
         self.bounds = .1
+        self.render_distance = 500
 
         self.z_buffer: list[float] = [0] * SCREEN_WIDTH
+
+    def _modify_transform(self, x, y):
+        old_direction_x = self.direction_x
+        self.direction_x = self.direction_x * x - self.direction_y * y
+        self.direction_y = old_direction_x * y + self.direction_y * x
+        old_plane_x = self.plane_x
+        self.plane_x = self.plane_x * x - self.plane_y * y
+        self.plane_y = old_plane_x * y + self.plane_y * x
 
     # moves camera returns transform
     def move(self, move_speed, rotation_speed, forward=False, backward=False, left=False, right=False,
@@ -39,51 +44,55 @@ class Raycaster(Group):
         tgm = (cos(rotation_speed), sin(rotation_speed))
         itgm = (cos(-rotation_speed), sin(-rotation_speed))
 
+        dx = self.direction_x * move_speed
+        dy = self.direction_y * move_speed
+
+        x_pos = int(self.position_x)
+        y_pos = int(self.position_y)
+
+        l_grid = shared.current_level.level_grid
+
         if forward:
-            if not shared.current_level.level_grid[int(self.position_x + self.direction_x * move_speed)][int(self.position_y)]:
-                self.position_x += self.direction_x * move_speed
-            if not shared.current_level.level_grid[int(self.position_x)][int(self.position_y + self.direction_y * move_speed)]:
-                self.position_y += self.direction_y * move_speed
+            if not l_grid[int(self.position_x + dx)][y_pos]:
+                self.position_x += dx
+            if not l_grid[x_pos][int(self.position_y + dy)]:
+                self.position_y += dy
         if backward:
-            if not shared.current_level.level_grid[int(self.position_x - self.direction_x * move_speed)][int(self.position_y)]:
-                self.position_x -= self.direction_x * move_speed
-            if not shared.current_level.level_grid[int(self.position_x)][int(self.position_y - self.direction_y * move_speed)]:
-                self.position_y -= self.direction_y * move_speed
+            if not l_grid[int(self.position_x - dx)][y_pos]:
+                self.position_x -= dx
+            if not l_grid[x_pos][int(self.position_y - dy)]:
+                self.position_y -= dy
         if strafe_right:
-            x_pos = int(self.position_x)
-            y_pos = int(self.position_y)
-            new_x_pos = int(self.position_x - self.direction_y * move_speed)
-            new_y_pos = int(self.position_y + self.direction_x * move_speed)
+            new_x_pos = int(self.position_x - dy)
+            new_y_pos = int(self.position_y + dx)
             if not shared.current_level.level_grid[new_x_pos][y_pos]:
-                self.position_x -= self.direction_y * move_speed
+                self.position_x -= dy
             if not shared.current_level.level_grid[x_pos][new_y_pos]:
-                self.position_y += self.direction_x * move_speed
+                self.position_y += dx
         if strafe_left:
-            x_pos = int(self.position_x)
-            y_pos = int(self.position_y)
-            new_x_pos = int(self.position_x + self.direction_y * move_speed)
-            new_y_pos = int(self.position_y - self.direction_x * move_speed)
-            if not shared.current_level.level_grid[new_x_pos][y_pos]:
-                self.position_x += self.direction_y * move_speed
-            if not shared.current_level.level_grid[x_pos][new_y_pos]:
-                self.position_y -= self.direction_x * move_speed
+            new_x_pos = int(self.position_x + dy)
+            new_y_pos = int(self.position_y - dx)
+            if not l_grid[new_x_pos][y_pos]:
+                self.position_x += dy
+            if not l_grid[x_pos][new_y_pos]:
+                self.position_y -= dx
         if left:
-            old_direction_x = self.direction_x
-            self.direction_x = self.direction_x * itgm[COS] - self.direction_y * itgm[SIN]
-            self.direction_y = old_direction_x * itgm[SIN] + self.direction_y * itgm[COS]
-            old_plane_x = self.plane_x
-            self.plane_x = self.plane_x * itgm[COS] - self.plane_y * itgm[SIN]
-            self.plane_y = old_plane_x * itgm[SIN] + self.plane_y * itgm[COS]
+            self._modify_transform(itgm[COS], itgm[SIN])
         if right:
-            old_direction_x = self.direction_x
-            self.direction_x = self.direction_x * tgm[COS] - self.direction_y * tgm[SIN]
-            self.direction_y = old_direction_x * tgm[SIN] + self.direction_y * tgm[COS]
-            old_plane_x = self.plane_x
-            self.plane_x = self.plane_x * tgm[COS] - self.plane_y * tgm[SIN]
-            self.plane_y = old_plane_x * tgm[SIN] + self.plane_y * tgm[COS]
+            self._modify_transform(tgm[COS], tgm[SIN])
         return self.position_x, self.position_y, self.direction_x, self.direction_y
 
-    def draw(self, screen):
+    def _get_sprite_distance(self, sprite):
+        center: Vector2 = sprite.raycaster_draw_position
+        pos: Vector2 = Vector2(self.position_x, self.position_y)
+        return (center - pos).length()
+
+    def _get_valid_sprites(self, sprite):
+        return sprite != self.owner and self.bounds < self._get_sprite_distance(sprite) < self.render_distance
+
+    def draw(self, screen: Surface):
+        if not shared.current_level.level_cells:
+            return
         for column in range(0, SCREEN_WIDTH, self.resolution):
             camera_x = 2.0 * column / SCREEN_WIDTH - 1.0
 
@@ -116,6 +125,7 @@ class Raycaster(Group):
             # Finding distance to a wall
             hit = 0
             side = 0
+            wall_tex = None
             while hit == 0:
                 if side_distance_x < side_distance_y:
                     side_distance_x += delta_distance_x
@@ -125,8 +135,12 @@ class Raycaster(Group):
                     side_distance_y += delta_distance_y
                     map_y += step_y
                     side = 1
-
-                if shared.current_level.level_grid[map_x][map_y] > 0:
+                try:
+                    if shared.current_level.level_grid[map_x][map_y] > 0:
+                        hit = 1
+                        wall_tex = (shared.current_level.level_cells[map_x][map_y]).wall
+                except (IndexError, TypeError) as error:
+                    log(f"Error drawing floor and ceilings.\n{error}")
                     hit = 1
 
             # Correction against fish eye effect
@@ -149,9 +163,10 @@ class Raycaster(Group):
 
             tex_x = int(TEXTURE_SIZE * wall_x) % TEXTURE_SIZE
 
-            wall_texture_slice = wall_texture.subsurface((tex_x, 0, 1, TEXTURE_SIZE))
-            wall_scaled_slice = pygame.transform.scale(wall_texture_slice, (self.resolution, draw_end - draw_start))
-            screen.blit(wall_scaled_slice, (column, draw_start))
+            if wall_tex:
+                wall_texture_slice = wall_tex.subsurface((tex_x, 0, 1, TEXTURE_SIZE))
+                wall_scaled_slice = pygame.transform.scale(wall_texture_slice, (self.resolution, draw_end - draw_start))
+                screen.blit(wall_scaled_slice, (column, draw_start))
 
             while draw_end < SCREEN_HEIGHT:
                 p = draw_end - SCREEN_HEIGHT_HALF
@@ -164,26 +179,29 @@ class Raycaster(Group):
                 cell_x = int(floor_x)
                 cell_y = int(floor_y)
 
-                tx = (TEXTURE_SIZE * (floor_x - cell_x)) % TEXTURE_SIZE
-                ty = (TEXTURE_SIZE * (floor_y - cell_y)) % TEXTURE_SIZE
+                try:
+                    cell_data = shared.current_level.level_cells[cell_x][cell_y]
+                    ceiling_tex = cell_data.ceiling
+                    floor_tex = cell_data.floor
 
-                # pygame.draw.rect(screen, "gray", (column, draw_start, self.resolution, self.resolution))
-                screen.blit(ceiling_texture, (column, draw_start), (tx, ty, self.resolution, self.resolution))
+                    tx = (TEXTURE_SIZE * (floor_x - cell_x)) % TEXTURE_SIZE
+                    ty = (TEXTURE_SIZE * (floor_y - cell_y)) % TEXTURE_SIZE
 
-                # pygame.draw.rect(screen, "purple", (column, draw_end, self.resolution, self.resolution))
-                screen.blit(floor_texture, (column, draw_end), (tx, ty, self.resolution, self.resolution))
+                    # pygame.draw.rect(screen, "gray", (column, draw_start, self.resolution, self.resolution))
+                    screen.blit(ceiling_tex, (column, draw_start), (tx, ty, self.resolution, self.resolution))
+
+                    # pygame.draw.rect(screen, "purple", (column, draw_end, self.resolution, self.resolution))
+                    screen.blit(floor_tex, (column, draw_end), (tx, ty, self.resolution, self.resolution))
+                except (IndexError, TypeError) as error:
+                    log(f"Error drawing floor and ceilings.\n{error}")
 
                 draw_start -= self.resolution
                 draw_end += self.resolution
 
-        camera_pos = (self.position_x, self.position_y)
-        filtered_sorted_sprites = sorted(
-            [sprite for sprite in self.sprites() if sprite != self.owner and get_sprite_distance(camera_pos, sprite) > self.bounds],
-            key=lambda x: get_sprite_distance(camera_pos, x)
-        )
-
-        for sprite in filtered_sorted_sprites:
-            center = sprite.center_position
+        f_sprites = filter(lambda x: self._get_valid_sprites(x), self.sprites())
+        fs_sprites = sorted(f_sprites, key=lambda x: self._get_sprite_distance(x), reverse=True)
+        for sprite in fs_sprites:
+            center = sprite.raycaster_draw_position
             sprite_x = center[0] - self.position_x
             sprite_y = center[1] - self.position_y
 
@@ -226,14 +244,15 @@ class Raycaster(Group):
                 for stripe in range(int(draw_start_x), int(draw_end_x)):
                     sprite_tex_x = int(256 * (stripe - (sprite_screen_x - sprite_width / 2)) * sprite.image.get_width() / sprite_width) / 256
                     if transform_y < self.z_buffer[stripe]:
-                        # Resolution based blit
-                        # for y in range(draw_start_y, draw_end_y, self.resolution):
-                        #     d = (y - v_move_screen) * 256 - SCREEN_HEIGHT * 128 + sprite_height * 128
-                        #     sprite_tex_y = ((d * TEXTURE_SIZE) / sprite_height) / 256
-                        #     screen.blit(sprite.image, (stripe, y), (sprite_tex_x, sprite_tex_y, self.resolution, self.resolution))
-
                         # Scaling based blit
                         if sprite_tex_x >= 1:
                             sprite_texture_slice = sprite.image.subsurface((sprite_tex_x, 0, 1, TEXTURE_SIZE))
-                            sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, (self.resolution, min(draw_end_y - draw_start_y, 15000)))
+                            size = (self.resolution, min(draw_end_y - draw_start_y, 15000))
+                            sprite_scaled_slice = pygame.transform.scale(sprite_texture_slice, size)
                             screen.blit(sprite_scaled_slice, (stripe, draw_start_y))
+                        # Resolution based blit
+                        # for y in range(draw_start_y, draw_end_y, self.resolution):
+                        #     d = ((y - v_move_screen) * 256) - ((SCREEN_HEIGHT + sprite_height) * 128)
+                        #     sprite_tex_y = ((d * TEXTURE_SIZE) / sprite_height) / 256
+                        #     area = (sprite_tex_x, sprite_tex_y, self.resolution, self.resolution)
+                        #     screen.blit(sprite.image, (stripe, y), area)

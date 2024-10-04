@@ -37,6 +37,44 @@ def randomize_walls(amount: int):
             grid[rx][ry] = 1
 
 
+def fill_grid():
+    for i in range(GRID_SIZE):
+        for j in range(GRID_SIZE):
+            grid[i][j] = 1
+
+
+def carve_maze(x, y):
+    grid[y][x] = 0  # Mark the current cell as part of the path
+    directions = [(0, -2), (0, 2), (-2, 0), (2, 0)]
+    # Randomize the directions to create more randomness in the maze
+    random.shuffle(directions)
+    for dx, dy in directions:
+        nx, ny = x + dx, y + dy
+        # Check if the neighboring cell can be carved
+        if is_valid(nx, ny) and grid[ny][nx] == 1:
+            # Carve the wall between current cell and the next cell
+            grid[ny - dy // 2][nx - dx // 2] = 0
+            # Recursively carve the next cell
+            carve_maze(nx, ny)
+
+
+def find_maze_dead_ends():
+    dead_ends = []
+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]
+    for i in range(1, GRID_SIZE - 1):
+        for j in range(1, GRID_SIZE - 1):
+            if grid[i][j] == 0:
+                wall_count = 0
+                for dx, dy in directions:
+                    nx = i + dx
+                    ny = j + dy
+                    if grid[nx][ny] == 1:
+                        wall_count += 1
+                if wall_count == 3:
+                    dead_ends.append((i, j))
+    return dead_ends
+
+
 # Check if a cell is valid (within the grid)
 def is_valid(row, col):
     return (row >= 0) and (row < GRID_SIZE) and (col >= 0) and (col < GRID_SIZE)

@@ -3,6 +3,7 @@ from collections import defaultdict
 from pygame import Mask, Vector2
 from pygame.sprite import Sprite
 
+import shared
 from config import TEXTURE_SIZE
 from shared import *
 
@@ -17,14 +18,18 @@ class GameObject(Sprite):
         self.rotation = 0
         self.components: list[GameObjectComponent] = list()
         super().__init__(groups)
-        self.image = Surface((TEXTURE_SIZE, TEXTURE_SIZE)).convert()
-        self.image.fill((255, 0, 255))
-        self.rect = self.image.get_rect()
-        self.rect.center = kwargs["center"] if "center" in kwargs else Vector2(0, 0)
-        self.center_position = Vector2(self.rect.center)
+        image = self.k_props.get("image")
+        if image is not None:
+            self.image, self.rect = shared.asset_registry.get_image(image)
+        else:
+            self.image = Surface((TEXTURE_SIZE, TEXTURE_SIZE)).convert()
+            self.image.fill((255, 0, 255))
+            self.rect = self.image.get_rect()
+        center = Vector2(kwargs["center"]) if "center" in self.k_props else Vector2(0, 0)
+        self.rect.center = center
+        self.raycaster_draw_position: Vector2 = center
 
     def update(self, *args, **kwargs):
-        self.rect.center = self.center_position
         if self.components:
             for comp in [c for c in self.components if c.needs_update]:
                 comp.comp_update(*args, **kwargs)

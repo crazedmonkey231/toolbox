@@ -362,7 +362,7 @@ def get_sprite_distance(from_pos: Sequence[float], to_sprite: Sprite):
 # Get Sprite distance from pos sqrt
 def get_sprite_distance_sqrt(from_pos: Sequence[float], to_sprite: Sprite):
     center = to_sprite.rect.center
-    distance = math.sqrt(from_pos[0] - center[0]) ** 2 + (from_pos[1] - center[1]) ** 2
+    distance = math.sqrt(from_pos[0] - center[0] ** 2 + (from_pos[1] - center[1]) ** 2)
     return distance
 
 

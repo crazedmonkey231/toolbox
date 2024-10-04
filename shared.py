@@ -5,7 +5,6 @@ from toolbox.raycaster import Raycaster
 from toolbox.systems.achievement.achievments import Achievements
 from toolbox.level import Level
 from toolbox.resistry import AssetRegistry
-from toolbox.systems.exchange.exchange import Exchange
 
 # Shared systems
 asset_registry: AssetRegistry = None
@@ -26,6 +25,7 @@ time_running_min = 0
 time_running_hour = 0
 
 # Main renderer
+# renderer_group: LayeredUpdates = LayeredUpdates()
 renderer_group: Raycaster = Raycaster()
 
 # Player ref group

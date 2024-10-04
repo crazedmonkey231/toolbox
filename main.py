@@ -8,6 +8,7 @@ import PIL
 import pygame
 import shared
 from config import SCREEN_SIZE, FPS, DEBUG, RGB_BLACK
+from toolbox.levels.test_level import TestLevel
 from toolbox.systems.achievement.achievments import Achievements
 from toolbox.levels.splash_screen import SplashScreen
 from shared import renderer_group
@@ -52,7 +53,8 @@ gifs = ['fire.gif']
 shared.asset_registry.load_registry(images, sounds, gifs)
 
 # Load splash screen
-toolbox.util.change_level(SplashScreen)
+# toolbox.util.change_level(SplashScreen)
+toolbox.util.change_level(TestLevel)
 
 # shared.mouse_grabbed = True
 toolbox.util.mouse_grab(shared.mouse_grabbed)
