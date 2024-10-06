@@ -11,7 +11,7 @@ class CompRaycasterCamera(GameObjectComponent):
         shared.renderer_group.owner = parent
         shared.renderer_group.position_x = pos[0]
         shared.renderer_group.position_y = pos[1]
-        self.parent.raycaster_draw_position = (pos[0], pos[1])
+        self.parent.draw_position = (pos[0], pos[1])
         self.parent.rect.center = (pos[0], pos[1])
         self.move_speed = 1.5
         self.rotation_speed = 1.5
@@ -43,5 +43,5 @@ class CompRaycasterCamera(GameObjectComponent):
                 self.transform = raycaster.move(0, delta_rotation, right=True)
             if mouse_dx > 0:
                 self.transform = raycaster.move(0, -delta_rotation, left=True)
-            self.parent.raycaster_draw_position = (self.transform[0], self.transform[1])
+            self.parent.draw_position = (self.transform[0], self.transform[1])
             self.parent.rect.center = (self.transform[0], self.transform[1])

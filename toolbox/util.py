@@ -10,7 +10,6 @@ from pygame import Surface, Rect, Vector2
 from pygame.sprite import Sprite, AbstractGroup
 import config
 import shared
-from toolbox.level import Level
 
 # Check mixer
 mixer_initialized = pygame.mixer or pygame.mixer.get_init()
@@ -370,17 +369,6 @@ def get_sprite_distance_sqrt(from_pos: Sequence[float], to_sprite: Sprite):
 def mouse_grab(mouse_grabbed):
     pygame.event.set_grab(mouse_grabbed)
     pygame.mouse.set_visible(not mouse_grabbed)
-
-
-# Change level
-def change_level(new_level: type[Level]):
-    import shared
-    for name, value in vars(shared).items():
-        if value and isinstance(value, AbstractGroup):
-            value.empty()
-    shared.overlay.fill((0, 0, 0, 0))
-    shared.current_level = new_level()
-    shared.current_level.load_sprites()
 
 
 #

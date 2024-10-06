@@ -25,8 +25,8 @@ time_running_min = 0
 time_running_hour = 0
 
 # Main renderer
-# renderer_group: LayeredUpdates = LayeredUpdates()
-renderer_group: Raycaster = Raycaster()
+renderer_group: LayeredUpdates = LayeredUpdates()
+# renderer_group: Raycaster = Raycaster()
 
 # Player ref group
 player_ref_group: GroupSingle = GroupSingle()

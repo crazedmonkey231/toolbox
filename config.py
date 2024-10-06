@@ -36,6 +36,7 @@ GRID_WIDTH: int = 32
 GRID_SIZE: int = SCREEN_WIDTH // GRID_WIDTH
 CELL_SIZE: int = SCREEN_WIDTH // GRID_SIZE
 DIRECTIONS: list[tuple[int, int]] = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+MAZE_DIRECTIONS = [(0, -2), (0, 2), (-2, 0), (2, 0)]
 
 # Stock market
 HIGH: str = "High"

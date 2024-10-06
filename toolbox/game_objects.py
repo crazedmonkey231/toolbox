@@ -27,7 +27,7 @@ class GameObject(Sprite):
             self.rect = self.image.get_rect()
         center = Vector2(kwargs["center"]) if "center" in self.k_props else Vector2(0, 0)
         self.rect.center = center
-        self.raycaster_draw_position: Vector2 = center
+        self.draw_position: Vector2 = center
 
     def update(self, *args, **kwargs):
         if self.components:

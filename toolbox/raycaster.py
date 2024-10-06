@@ -1,4 +1,3 @@
-import os
 import pygame
 from pygame import Surface, Vector2
 from pygame.sprite import Group, Sprite
@@ -29,6 +28,12 @@ class Raycaster(Group):
 
         self.z_buffer: list[float] = [0] * SCREEN_WIDTH
 
+    def get_position_vector(self):
+        return Vector2(self.position_x, self.position_y)
+
+    def get_direction_vector(self):
+        return Vector2(self.direction_x, self.direction_y)
+
     def _modify_transform(self, x, y):
         old_direction_x = self.direction_x
         self.direction_x = self.direction_x * x - self.direction_y * y
@@ -50,7 +55,7 @@ class Raycaster(Group):
         x_pos = int(self.position_x)
         y_pos = int(self.position_y)
 
-        l_grid = shared.current_level.level_grid
+        l_grid = shared.current_level.level_grid.grid
 
         if forward:
             if not l_grid[int(self.position_x + dx)][y_pos]:
@@ -65,9 +70,9 @@ class Raycaster(Group):
         if strafe_right:
             new_x_pos = int(self.position_x - dy)
             new_y_pos = int(self.position_y + dx)
-            if not shared.current_level.level_grid[new_x_pos][y_pos]:
+            if not l_grid[new_x_pos][y_pos]:
                 self.position_x -= dy
-            if not shared.current_level.level_grid[x_pos][new_y_pos]:
+            if not l_grid[x_pos][new_y_pos]:
                 self.position_y += dx
         if strafe_left:
             new_x_pos = int(self.position_x + dy)
@@ -83,7 +88,7 @@ class Raycaster(Group):
         return self.position_x, self.position_y, self.direction_x, self.direction_y
 
     def _get_sprite_distance(self, sprite):
-        center: Vector2 = sprite.raycaster_draw_position
+        center: Vector2 = sprite.draw_position
         pos: Vector2 = Vector2(self.position_x, self.position_y)
         return (center - pos).length()
 
@@ -136,7 +141,7 @@ class Raycaster(Group):
                     map_y += step_y
                     side = 1
                 try:
-                    if shared.current_level.level_grid[map_x][map_y] > 0:
+                    if shared.current_level.level_grid.grid[map_x][map_y] > 0:
                         hit = 1
                         wall_tex = (shared.current_level.level_cells[map_x][map_y]).wall
                 except (IndexError, TypeError) as error:
@@ -169,7 +174,7 @@ class Raycaster(Group):
                 screen.blit(wall_scaled_slice, (column, draw_start))
 
             while draw_end < SCREEN_HEIGHT:
-                p = draw_end - SCREEN_HEIGHT_HALF
+                p = draw_end - SCREEN_HEIGHT_HALF + 1e-30
                 pos_z = 0.5 * SCREEN_HEIGHT
                 row_distance = pos_z / p
 
@@ -201,7 +206,7 @@ class Raycaster(Group):
         f_sprites = filter(lambda x: self._get_valid_sprites(x), self.sprites())
         fs_sprites = sorted(f_sprites, key=lambda x: self._get_sprite_distance(x), reverse=True)
         for sprite in fs_sprites:
-            center = sprite.raycaster_draw_position
+            center = sprite.draw_position
             sprite_x = center[0] - self.position_x
             sprite_y = center[1] - self.position_y
 
